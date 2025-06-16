@@ -1,5 +1,5 @@
 // app.js
-import Color from "./node_modules/colorjs.io/dist/color.js";
+import Color from "https://colorjs.io/dist/color.js";
 import { generateTintShadeScale, ease } from "./scale.js";
 import { defaults, colorConfigs, stepsCount } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";

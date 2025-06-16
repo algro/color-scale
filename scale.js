@@ -1,5 +1,5 @@
 // scale.js
-import Color from "./node_modules/colorjs.io/dist/color.js";
+import Color from "https://colorjs.io/dist/color.js";
 import { oklchToHex } from "./colors-utilities.js";
 import { oklchToOKhsl, okhslToOKLCH } from "./okhsl.js";
 

@@ -1,7 +1,7 @@
 // colors.js
 
 import { generateTintShadeScale } from "./scale.js";
-import Color from "./node_modules/colorjs.io/dist/color.js";
+import Color from "https://colorjs.io/dist/color.js";
 
 // 1) Export stepsCount (odd integer, e.g. 11, 13, 15…)
 export const stepsCount = 13;

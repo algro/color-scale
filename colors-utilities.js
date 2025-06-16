@@ -1,5 +1,5 @@
 // colors-utilities.js
-import Color from "./node_modules/colorjs.io/dist/color.js";
+import Color from "https://colorjs.io/dist/color.js";
 
 /**
  * Computes the optimal contrast color (black or white) for text on a given background color
