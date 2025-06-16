@@ -17,8 +17,8 @@ export const defaults = {
   tintEndS:   0.9,    // Saturation approaching base-500 (without affecting base-500)
   
   // Shade saturation progression (0-1) - from base-500 to step 950  
-  shadeStartS: 0.92,   // Saturation starting from base-500 (without affecting base-500)
-  shadeEndS:   0.4,   // Saturation at shade-950 (darkest)    
+  shadeStartS: 0.85,   // Saturation starting from base-500 (without affecting base-500)
+  shadeEndS:   0.3,   // Saturation at shade-950 (darkest)    
 
   // Note: Uses OKhsl color space for perceptually uniform saturation across all hues.
   // Bezier curves control lightness and hue progression for smooth transitions.
@@ -31,33 +31,38 @@ export const colorConfigs = [
     name: "red-500",
     baseHex: "#F23441",
     startHueShift: -8.0,
-    endHueShift:    -5
+    endHueShift:    -5,
+    shadeStartS: 0.9
   },
   {
     name: "orange-500",
     baseHex: "#f67b29",
     startHueShift: 26,
-    endHueShift:   -8
+    endHueShift:   -8,
+    shadeStartS: 0.95
   },
   {
     name: "amber-500",
     baseHex: "#F5A314",
     startHueShift: 20,
-    endHueShift:   -25
+    endHueShift:   -25,
+    shadeStartS: 0.95
     
   },
   {
     name: "yellow-500",
     baseHex: "#FAB905",
     startHueShift: 15,
-    endHueShift:   -32
+    endHueShift:   -32,
+    shadeStartS: 0.9
     
   },
   {
     name: "olive-500",
     baseHex: "#C5C020",
     startHueShift: 0,
-    endHueShift:   -5
+    endHueShift:   -5,
+    shadeStartS: 0.9
     
   },
   {
@@ -146,7 +151,8 @@ export const colorConfigs = [
     name: "rose-500",
     baseHex: "#EE3A59",
     startHueShift:  -4.0,
-    endHueShift:    -12
+    endHueShift:    -12,
+    shadeStartS: 0.9
   },
   {
     name: "sand-500",
