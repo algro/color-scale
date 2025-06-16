@@ -77,12 +77,11 @@
       <p>Custom defined hue shifts towards lighter tints and darker shades allows to get more balanced color palette. E.g. Orange adds more red for shades (less "dirty" swatches), or more blue in iris towards lighter tints.</p>
       <h2>Granular Control</h2>
       <p>Bezier curves control lightness, saturation, and hue progression. This allows smooth and slower transitions in lightest colors and towards darkest colors.</p>
-      <h2>Hybrid approach combining the best of OKLCH and OKHSL color spaces</h2>
+      <h2>Consistent results</h2>
        <ul>
-         <li><strong>OKLCH for precision:</strong> Calculate lightness and hue using bezier curves in OKLCH space for exact control.</li>
-         <li><strong>OKHSL for saturation:</strong> Convert saturation values through OKHSL to automatically compensate for hue-dependent chroma variations.</li>
-         <li><strong>Smart mapping:</strong> OKHSL maps saturation values to appropriate chroma levels, ensuring equal perceived saturation across all hues.</li>
-         <li><strong>Gamut safety:</strong> The OKHSL conversion inherently keeps all colors within valid sRGB bounds.</li>
+         <li><strong>Equal vibrancy:</strong> Colors with the same saturation setting look equally vibrant across all hues, no more oversaturated yellows or dull blues.</li>
+         <li><strong>Smooth progressions:</strong> Mathematical curves ensure seamless transitions from light tints to dark shades with natural color evolution.</li>
+         <li><strong>Smart compensation:</strong> Automatically adjusts for how human perception varies across different colors, ensuring visual consistency.</li>
        </ul>
       
        <p class="reference">The OKHSL color space implementation is based on <a href="https://bottosson.github.io/posts/colorpicker/#okhsl" target="_blank" rel="noopener noreferrer">Björn Ottosson's research on perceptual color spaces</a>, which provides the mathematical foundation for achieving perceptually uniform saturation across different hues.
