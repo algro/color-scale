@@ -113,7 +113,7 @@ export const colorConfigs = [
     endHueShift:     0
   },
   {
-    name: "brand-500",
+    name: "iris-500",
     baseHex: "#6D4AFF",
     startHueShift:  -5,
     endHueShift:     7

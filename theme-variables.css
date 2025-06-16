@@ -17,9 +17,9 @@
   --border-strong: var(--slate-300);
 
   /* Interactive colors */
-  --interactive-norm: var(--brand-600);
-  --interactive-hover: var(--brand-700);
-  --interactive-active: var(--brand-800);
+  --interactive-norm: var(--iris-600);
+  --interactive-hover: var(--iris-700);
+  --interactive-active: var(--iris-800);
   --interactive-disabled: var(--slate-300);
 }
 
