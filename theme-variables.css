@@ -1,0 +1,49 @@
+/* Theme Variables - Light Mode (Default) */
+:root {
+  /* Background colors */
+  --background-norm: white;
+  --background-weak: var(--slate-50);
+  --background-strong: var(--slate-100);
+  --background-inverted: var(--slate-950);
+
+  /* Text colors */
+  --text-norm: var(--slate-900);
+  --text-weak: var(--slate-600);
+  --text-inverted: var(--slate-50);
+
+  /* Border colors */
+  --border-norm: var(--slate-200);
+  --border-weak: var(--slate-100);
+  --border-strong: var(--slate-300);
+
+  /* Interactive colors */
+  --interactive-norm: var(--brand-600);
+  --interactive-hover: var(--brand-700);
+  --interactive-active: var(--brand-800);
+  --interactive-disabled: var(--slate-300);
+}
+
+/* Dark Mode Theme */
+[data-theme="dark"] {
+  /* Background colors */
+  --background-norm: var(--slate-950);
+  --background-weak: var(--slate-900);
+  --background-strong: var(--slate-800);
+  --background-inverted: var(--slate-50);
+
+  /* Text colors */
+  --text-norm: var(--slate-200);
+  --text-weak: var(--slate-300);
+  --text-inverted: black;
+
+  /* Border colors */
+  --border-norm: var(--slate-800);
+  --border-weak: var(--slate-900);
+  --border-strong: var(--slate-700);
+
+  /* Interactive colors */
+  --interactive-norm: var(--blue-400);
+  --interactive-hover: var(--blue-300);
+  --interactive-active: var(--blue-200);
+  --interactive-disabled: var(--slate-700);
+} 

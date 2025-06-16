@@ -1,0 +1,463 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+
+/* Base styles */
+:root {
+  /* Base font settings */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Swatch dimensions */
+  --swatch-width:             44px;
+  --corner-radius:            12px;
+
+  /* Spacing between swatches horizontally & rows vertically */
+  --gutter-horizontal:        12px;
+  --gutter-vertical:          12px;
+
+  /* Left-column width (for "Red", "Orange", etc.) */
+  --color-label-width:        80px;
+  --scale-label-spacing:      12px;
+
+  /* Container padding & top offset */
+  --container-padding:        16px;
+  --top-spacing:             80px;
+
+  /* Toggle whether to show contrast dot on hover (0 = no, 1 = yes) */
+  --show-contrast:            1;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--background-norm);
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  padding: var(--top-spacing) var(--container-padding);
+}
+
+.container {
+  max-width: 848px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+  margin-bottom: 8px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.labels-row {
+  display: flex;
+  margin-bottom: var(--scale-label-spacing);
+  width: 100%;
+  max-width: 100%;
+}
+
+.color-label-placeholder {
+  width: var(--color-label-width);
+  flex-shrink: 0;
+  margin-right: var(--scale-label-spacing);
+}
+
+.color-label {
+  width: var(--color-label-width);
+  color: var(--text-norm);
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-right: var(--scale-label-spacing);
+  cursor: pointer;
+  position: relative;
+}
+
+/* The container around a single row of swatches */
+.swatch-container {
+  display: flex;
+  gap: var(--gutter-horizontal);
+  flex-wrap: nowrap;
+}
+
+/* Each individual swatch box */
+.swatch {
+  width: var(--swatch-width);
+  height: var(--swatch-width);
+  flex-shrink: 0;
+  border-radius: var(--corner-radius);
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .swatch {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Tooltip styles - shared between swatches, scale labels, and color labels */
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -28px);
+  background: var(--background-inverted);
+  color: var(--text-inverted);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 50ms ease-in-out, transform 50ms ease-in-out;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
+/* Show tooltips on hover */
+.swatch:hover .tooltip,
+.color-label:hover .tooltip,
+.scale-label:hover .tooltip {
+  opacity: 1;
+  transform: translate(-50%, -32px);
+  transition: opacity 200ms ease-in-out, transform 200ms ease-in-out;
+}
+
+/* Contrast dot styles */
+.contrast-dot {
+  display: none;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.swatch:hover .contrast-dot {
+  display: var(--show-contrast);
+}
+
+/* Scale labels row */
+.scale-labels-row {
+  display: flex;
+  gap: var(--gutter-horizontal);
+  padding-left: 80px;
+}
+
+.labels-row {
+  margin-bottom: 8px;
+}
+
+.color-label-placeholder {
+  width: var(--color-label-width);
+  margin-right: var(--scale-label-spacing);
+}
+
+#scale-labels {
+  display: flex;
+  gap: var(--gutter-horizontal);
+  flex-wrap: nowrap;
+  flex: 1;
+}
+
+/* Scale label individual items */
+.scale-label {
+  width: var(--swatch-width);
+  height: var(--swatch-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-norm);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Curve visualization styles */
+#curve-container {
+  width: 100%;
+  margin-top: 40px;
+  border-radius: 12px;
+  padding: 40px;
+  background: var(--background-weak);
+  box-sizing: border-box;
+}
+
+.curve-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.curve-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-norm);
+}
+
+.curve-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tab-switcher {
+  display: flex;
+  background: var(--background-strong);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 2px;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-norm);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-button.active {
+  background: white;
+  color: black;
+}
+
+.curves-row {
+  display: flex;
+  gap: clamp(20px, 5%, 40px);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.curve-section {
+  flex: 1;
+  min-width: 0; /* Allow flex items to shrink below their content size */
+}
+
+.curve-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-norm);
+}
+
+/* SVG styles */
+.curve-section svg {
+  background: var(--background-norm);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 372px;
+  height: auto;
+  aspect-ratio: 3/2; /* Maintain 3:2 aspect ratio */
+}
+
+/* Override for dark mode toggle SVGs */
+.dark-mode-toggle svg {
+  width: 20px;
+  height: 20px;
+  background: none;
+  border-radius: 0;
+  aspect-ratio: unset;
+}
+
+.curve-labels {
+  margin-top: 12px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-weak);
+}
+
+.curve-labels span {
+  color: var(--text-weak);
+}
+
+/* Dark mode toggle */
+.dark-mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: none;
+  background: var(--background-weak);
+  color: var(--text-norm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.dark-mode-toggle:hover {
+  background: var(--background-strong);
+}
+
+
+
+.sun-icon {
+  display: block;
+}
+
+.moon-icon {
+  display: none;
+}
+
+/* Dark mode styles */
+[data-theme="dark"] .sun-icon {
+  display: none;
+}
+
+[data-theme="dark"] .moon-icon {
+  display: block;
+}
+
+[data-theme="dark"] .tab-button.active {
+  background: var(--background-inverted);
+  color: var(--text-inverted);
+}
+
+#scales {
+  width: 100%;
+}
+
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.copy-scale-button {
+  padding: 12px 16px;
+  background: var(--background-weak);
+  border: none;
+  border-radius: 8px;
+  color: var(--text-norm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.copy-scale-button:hover {
+  background: var(--background-strong);
+}
+
+.curve-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+ 
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-weak);
+}
+
+/* Documentation section */
+#documentation {
+  width: 100%;
+  margin-top: 40px;
+  padding: 120px;
+  background: var(--background-norm);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+#documentation h1 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-norm);
+}
+
+#documentation h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-norm);
+}
+
+#documentation p {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-norm);
+}
+
+#documentation ol, #documentation ul {
+  margin: 0 0 16px 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-norm);
+}
+
+#documentation li {
+  margin-bottom: 8px;
+}
+
+#documentation li strong {
+  color: var(--text-norm);
+  font-weight: 600;
+}
+
+
+
+/* Link styles */
+a, a:visited {
+  color: var(--text-norm);
+  text-decoration: underline;
+  text-decoration-color: var(--text-norm);
+}
+
+a:hover, a:visited:hover {
+  color: var(--text-norm);
+  text-decoration-color: var(--text-norm);
+}
