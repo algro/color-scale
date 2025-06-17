@@ -26,7 +26,7 @@
 /* Dark Mode Theme */
 [data-theme="dark"] {
   /* Background colors */
-  --background-norm: var(--slate-950);
+  --background-norm: black;
   --background-weak: var(--slate-900);
   --background-strong: var(--slate-800);
   --background-inverted: var(--slate-50);

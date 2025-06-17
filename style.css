@@ -8,12 +8,14 @@
   font-weight: 400;
 
   /* Swatch dimensions */
-  --swatch-width:             44px;
-  --corner-radius:            12px;
+  --swatch-width: 60px;
+  --swatch-height: 40px;
+  --corner-radius: 16px;
+  --corner-radius-small: 10px;
 
   /* Spacing between swatches horizontally & rows vertically */
-  --gutter-horizontal:        12px;
-  --gutter-vertical:          12px;
+  --gutter-horizontal:        0;
+  --gutter-vertical:          var(--space-1);
 
   /* Left-column width (for "Red", "Orange", etc.) */
   --color-label-width:        80px;
@@ -25,6 +27,33 @@
 
   /* Toggle whether to show contrast dot on hover (0 = no, 1 = yes) */
   --show-contrast:            1;
+
+  /* Spacing */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+  --space-12: 96px;
+  --space-13: 128px;
+  --space-14: 160px;
+  --space-15: 192px;
+  --space-16: 224px;
+  --space-17: 256px;
+  --space-18: 288px;
+  --space-19: 320px;
+  --space-20: 384px;
+
+  /* Gutters */
+  --gutter-horizontal: 0;
+  --gutter-vertical: var(--space-4);
 }
 
 * {
@@ -37,28 +66,63 @@ html, body {
   width: 100%;
   min-height: 100vh;
   background: var(--background-norm);
-  margin: 0;
-  padding: 0;
 }
 
 body {
   display: flex;
-  justify-content: center;
-  padding: var(--top-spacing) var(--container-padding);
+  justify-content: left;
+  margin: 80px;
 }
 
 .container {
-  max-width: 848px;
-  margin: 0 auto;
-  padding: 20px;
-  box-sizing: border-box;
+  max-width: 100%;
+  
+  padding: var(--space-4);
 }
 
-.row {
+.scales-container {
   display: flex;
-  margin-bottom: 8px;
-  width: 100%;
-  max-width: 100%;
+  flex-direction: column;
+  gap: var(--space-0);
+  padding: var(--space-0);
+}
+
+.scale-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-0);
+  padding: var(--space-0);
+  position: relative;
+  margin: var(--space-0) 0;
+}
+
+.swatch-container {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-0);
+  flex: 0 0 auto;
+  border-radius: var(--corner-radius);
+ 
+}
+
+.color-row-checkbox {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  padding-right: var(--space-4);
+}
+
+.color-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.scale-row:hover .color-row-checkbox {
+  opacity: 1;
+}
+
+.scale-row .color-checkbox:checked + .color-row-checkbox {
+  opacity: 1;
 }
 
 .labels-row {
@@ -86,26 +150,23 @@ body {
   position: relative;
 }
 
-/* The container around a single row of swatches */
-.swatch-container {
-  display: flex;
-  gap: var(--gutter-horizontal);
-  flex-wrap: nowrap;
-}
-
 /* Each individual swatch box */
 .swatch {
   width: var(--swatch-width);
-  height: var(--swatch-width);
-  flex-shrink: 0;
-  border-radius: var(--corner-radius);
+  height: var(--swatch-height);
   position: relative;
   cursor: pointer;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
 }
 
-[data-theme="dark"] .swatch {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+.swatch:first-child {
+  border-top-left-radius: var(--corner-radius-small);
+  border-bottom-left-radius: var(--corner-radius-small);
+}
+
+.swatch:last-child {
+  border-top-right-radius: var(--corner-radius-small);
+  border-bottom-right-radius: var(--corner-radius-small);
 }
 
 /* Tooltip styles - shared between swatches, scale labels, and color labels */
@@ -195,7 +256,7 @@ body {
 }
 
 /* Curve visualization styles */
-#curve-container {
+.curve-container {
   width: 100%;
   margin-top: 40px;
   border-radius: 12px;
@@ -322,8 +383,6 @@ body {
   background: var(--background-strong);
 }
 
-
-
 .sun-icon {
   display: block;
 }
@@ -379,7 +438,6 @@ body {
   flex-direction: column;
   gap: 8px;
   margin-top: 16px;
- 
 }
 
 .legend-item {
@@ -448,8 +506,6 @@ body {
   font-weight: 600;
 }
 
-
-
 /* Link styles */
 a, a:visited {
   color: var(--text-norm);
@@ -460,4 +516,138 @@ a, a:visited {
 a:hover, a:visited:hover {
   color: var(--text-norm);
   text-decoration-color: var(--text-norm);
+}
+
+/* Color Editor Pane */
+.color-editor-pane {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100vh;
+  background: var(--background-norm);
+  border-left: 1px solid var(--border-norm);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow-y: auto;
+  display: none;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .color-editor-pane {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-norm);
+}
+
+.editor-header h3 {
+  margin: 0;
+  color: var(--text-norm);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.close-editor {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.close-editor:hover {
+  background: var(--border-norm);
+  color: var(--text-norm);
+}
+
+/* Form Styles */
+.color-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-norm);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+  padding: 8px 12px;
+  border: 1px solid var(--border-norm);
+  border-radius: 6px;
+  background: var(--background-norm);
+  color: var(--text-norm);
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--text-norm);
+}
+
+.form-group input[type="color"] {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-norm);
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+/* Color input group (color picker + text input) */
+.form-group:has(input[type="color"]) {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-group:has(input[type="color"]) input[type="text"] {
+  flex: 1;
+}
+
+/* Responsive layout adjustments */
+@media (max-width: 768px) {
+  .color-editor-pane {
+    width: 100%;
+    height: 50vh;
+    top: auto;
+    bottom: 0;
+    border-left: none;
+    border-top: 1px solid var(--border-norm);
+  }
+}
+
+.content-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-4) 0;
+}
+
+.form-hint {
+  display: block;
+  font-size: 0.8em;
+  color: var(--text-weak);
+  margin-top: 0.25rem;
 }

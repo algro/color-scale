@@ -1,6 +1,6 @@
 // app.js
 import Color from "https://colorjs.io/dist/color.js";
-import { generateTintShadeScale, ease } from "./scale.js";
+import { generateTintShadeScale, ease, curveSettings } from "./scale.js";
 import { defaults, colorConfigs, stepsCount } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";
 
@@ -15,6 +15,7 @@ window.allColorScales = [];
 // Theme and step count management - declare early
 let currentStepsCount = 13;
 let currentTheme = 'slate';
+let selectedColorIndex = -1; // Track which color is selected for editing
 
 window.useOklab = false;
 window.addEventListener("keydown", (e) => {
@@ -22,6 +23,38 @@ window.addEventListener("keydown", (e) => {
     window.useOklab = !window.useOklab;
   }
 });
+
+// URL state management - similar to ColorBox.io
+function getStepsForCurrentCount() {
+  const count = currentStepsCount;
+  const baseLeft  = [50, 100, 200, 300, 400];
+  const baseRight = [600, 700, 800, 900, 950];
+  const midLeft   = [150, 250, 350, 450];
+  const midRight  = [550, 650, 750, 850];
+  const extraTotal   = count - 11;
+  const extrasPerSide = extraTotal / 2;
+
+  // Build left (tints)
+  const leftStops = baseLeft.slice();
+  for (let i = 0; i < extrasPerSide; i++) {
+    leftStops.push(midLeft[i]);
+  }
+  leftStops.sort((a,b)=>a-b);
+
+  // Build right (shades)
+  const rightStops = baseRight.slice();
+  for (let i = 0; i < extrasPerSide; i++) {
+    rightStops.push(midRight[midRight.length - 1 - i]);
+  }
+  rightStops.sort((a,b)=>a-b);
+
+  return [...leftStops, 500, ...rightStops];
+}
+
+function getStepNameForIndex(colorName, stepIndex) {
+  const steps = getStepsForCurrentCount();
+  return `${colorName}-${steps[stepIndex]}`;
+}
 
 // Update swatch count CSS variable whenever it changes
 function updateSwatchCount(count) {
@@ -37,7 +70,7 @@ function createScaleRow({
   endL:   cfgEndL,
   stepsCount: configStepsCount,
   ...overrides
-}) {
+}, rowIndex) {
   // Use provided stepsCount or fall back to current global value
   const actualStepsCount = configStepsCount || currentStepsCount || stepsCount;
   // Convert baseHex → OKLCH coords:
@@ -75,44 +108,18 @@ function createScaleRow({
   window.allColorScales.push({
     name: name,
     hexValues: fullScaleHex,
-    lchValues: fullScaleLCH
+    lchValues: fullScaleLCH,
+    config: { name, baseHex, startHueShift, endHueShift, startL: cfgStartL, endL: cfgEndL, ...overrides }
   });
 
   const row = document.createElement("div");
-  row.className = "row scale-row";
-
-  const colorLabel = document.createElement("div");
-  colorLabel.className = "color-label";
-  colorLabel.textContent = name.split("-")[0];
-
-  // Add tooltip for color label
-  const labelTooltip = document.createElement("div");
-  labelTooltip.className = "tooltip";
-  colorLabel.appendChild(labelTooltip);
-
-  // Add event listeners for color label
-  colorLabel.addEventListener("mouseenter", () => {
-    labelTooltip.textContent = "Copy hex values";
-  });
-  
-  colorLabel.addEventListener("mouseleave", () => {
-    labelTooltip.textContent = "";
-  });
-
-  colorLabel.addEventListener("click", async () => {
-    // Collect all hex values from this row
-    const hexValues = fullScaleHex.join(", ");
-    await navigator.clipboard.writeText(hexValues);
-    
-    // Show confirmation
-    labelTooltip.textContent = "Copied to clipboard!";
-    setTimeout(() => {
-      labelTooltip.textContent = "Copy hex values";
-    }, 1000);
-  });
+  row.className = "column scale-row";
+  row.dataset.rowIndex = rowIndex;
 
   const swatchContainer = document.createElement("div");
   swatchContainer.className = "swatch-container";
+
+  const colorName = name.split("-")[0]; // Extract base color name (e.g., "red" from "red-500")
 
   fullScaleHex.forEach((hex, idx) => {
     const sw = document.createElement("div");
@@ -132,12 +139,13 @@ function createScaleRow({
     sw.appendChild(contrastDot);
 
     sw.addEventListener("mouseenter", () => {
+      const stepName = getStepNameForIndex(colorName, idx);
       if (window.useOklab) {
         const { L, C, H } = sw.__oklchCoords;
         const Lpct = L.toFixed(1) + '%';
-        tooltip.textContent = `oklch(${Lpct} ${C.toFixed(3)} ${H.toFixed(1)})`;
+        tooltip.textContent = `${stepName} oklch(${Lpct} ${C.toFixed(3)} ${H.toFixed(1)})`;
       } else {
-        tooltip.textContent = hex;
+        tooltip.textContent = `${stepName} ${hex}`;
       }
     });
     sw.addEventListener("mouseleave", () => {
@@ -156,38 +164,353 @@ function createScaleRow({
       // Show confirmation message
       tooltip.textContent = "Copied to clipboard!";
       setTimeout(() => {
-        // Restore original color value
+        // Restore original color value with step name
+        const stepName = getStepNameForIndex(colorName, idx);
         tooltip.textContent = window.useOklab
           ? (()=>{
               const { L, C, H } = sw.__oklchCoords;
               const Lpct = L.toFixed(1) + '%';
-              return `oklch(${Lpct} ${C.toFixed(3)} ${H.toFixed(1)})`;
+              return `${stepName} oklch(${Lpct} ${C.toFixed(3)} ${H.toFixed(1)})`;
             })()
-          : hex;
+          : `${stepName} ${hex}`;
       }, 1000);
     });
 
     swatchContainer.appendChild(sw);
   });
 
-  row.appendChild(colorLabel);
+  // Create hover-activated checkbox
+  const checkboxContainer = document.createElement("div");
+  checkboxContainer.className = "color-row-checkbox";
+  
+  const checkbox = document.createElement("input");
+  checkbox.type = "radio"; // Use radio button for only one selection
+  checkbox.name = "color-selection";
+  checkbox.className = "color-checkbox";
+  checkbox.value = rowIndex;
+  
+  checkboxContainer.appendChild(checkbox);
+  
+  // Handle checkbox selection
+  checkbox.addEventListener("change", () => {
+    if (checkbox.checked) {
+      selectedColorIndex = rowIndex;
+      showColorEditor(rowIndex);
+    }
+  });
+
   row.appendChild(swatchContainer);
+  row.appendChild(checkboxContainer);
+  
+  // Add hover effects for checkbox visibility
+  row.addEventListener("mouseenter", () => {
+    checkboxContainer.style.opacity = "1";
+  });
+  
+  row.addEventListener("mouseleave", () => {
+    if (!checkbox.checked) {
+      checkboxContainer.style.opacity = "0";
+    }
+  });
+
   return row;
 }
 
+// Show/hide color editor pane
+function showColorEditor(colorIndex) {
+  let editorPane = document.getElementById("color-editor-pane");
+  
+  if (!editorPane) {
+    // Create the editor pane
+    editorPane = document.createElement("div");
+    editorPane.id = "color-editor-pane";
+    editorPane.className = "color-editor-pane";
+    
+    const container = document.querySelector(".container");
+    container.appendChild(editorPane);
+  }
+  
+  // Show the pane
+  editorPane.style.display = "block";
+  
+  // Populate with current color's settings
+  populateColorEditor(colorIndex);
+}
+
+function hideColorEditor() {
+  const editorPane = document.getElementById("color-editor-pane");
+  if (editorPane) {
+    editorPane.style.display = "none";
+  }
+  selectedColorIndex = -1;
+  
+  // Uncheck all checkboxes
+  document.querySelectorAll(".color-checkbox").forEach(cb => {
+    cb.checked = false;
+    cb.closest(".color-row-checkbox").style.opacity = "0";
+  });
+}
+
+function populateColorEditor(colorIndex) {
+  const editorPane = document.getElementById("color-editor-pane");
+  const config = window.allColorScales[colorIndex].config;
+  const colorName = config.name.split("-")[0];
+  
+  editorPane.innerHTML = `
+    <div class="editor-header">
+      <h3>Color Settings</h3>
+      <button class="close-editor" onclick="hideColorEditor()">×</button>
+    </div>
+    <form class="color-form">
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" id="color-name" value="${colorName}" data-property="name">
+      </div>
+      <div class="form-group">
+        <label>Color:</label>
+        <input type="color" id="color-base" value="${config.baseHex}" data-property="baseHex">
+        <input type="text" id="color-hex" value="${config.baseHex}" data-property="baseHex">
+      </div>
+      <div class="form-group">
+        <label>Start luminance:</label>
+        <input type="number" id="start-luminance" value="${config.startL ?? defaults.startL}" min="0" max="100" step="0.1" data-property="startL">
+      </div>
+      <div class="form-group">
+        <label>End luminance:</label>
+        <input type="number" id="end-luminance" value="${config.endL ?? defaults.endL}" min="0" max="100" step="0.1" data-property="endL">
+      </div>
+      <div class="form-group">
+        <label>Tint rate:</label>
+        <input type="number" id="tint-rate" value="${config.tintRate ?? defaults.tintRate}" min="0" max="1" step="0.01" data-property="tintRate">
+        <span class="form-hint">How much of the way to base-500 the tints reach (0-1)</span>
+      </div>
+      <div class="form-group">
+        <label>Shade rate:</label>
+        <input type="number" id="shade-rate" value="${config.shadeRate ?? defaults.shadeRate}" min="0" max="1" step="0.01" data-property="shadeRate">
+        <span class="form-hint">How much of the way to endL the shades reach (0-1)</span>
+      </div>
+      <div class="form-group">
+        <label>Tint start saturation:</label>
+        <input type="number" id="tint-start-sat" value="${config.tintStartS ?? defaults.tintStartS}" min="0" max="1" step="0.01" data-property="tintStartS">
+      </div>
+      <div class="form-group">
+        <label>Tint end saturation:</label>
+        <input type="number" id="tint-end-sat" value="${config.tintEndS ?? defaults.tintEndS}" min="0" max="1" step="0.01" data-property="tintEndS">
+      </div>
+      <div class="form-group">
+        <label>Shade start saturation:</label>
+        <input type="number" id="shade-start-sat" value="${config.shadeStartS ?? defaults.shadeStartS}" min="0" max="1" step="0.01" data-property="shadeStartS">
+      </div>
+      <div class="form-group">
+        <label>Shade end saturation:</label>
+        <input type="number" id="shade-end-sat" value="${config.shadeEndS ?? defaults.shadeEndS}" min="0" max="1" step="0.01" data-property="shadeEndS">
+      </div>
+      <div class="form-group">
+        <label>Start hue shift:</label>
+        <input type="number" id="start-hue-shift" value="${config.startHueShift}" min="-180" max="180" step="0.1" data-property="startHueShift">
+      </div>
+      <div class="form-group">
+        <label>End hue shift:</label>
+        <input type="number" id="end-hue-shift" value="${config.endHueShift}" min="-180" max="180" step="0.1" data-property="endHueShift">
+      </div>
+    </form>
+  `;
+  
+  // Add event listeners for real-time updates
+  const form = editorPane.querySelector(".color-form");
+  form.addEventListener("input", (e) => {
+    if (e.target.dataset.property) {
+      updateColorConfig(colorIndex, e.target.dataset.property, e.target.value);
+    }
+  });
+  
+  // Sync color picker and text input
+  const colorPicker = editorPane.querySelector("#color-base");
+  const colorText = editorPane.querySelector("#color-hex");
+  
+  colorPicker.addEventListener("input", () => {
+    colorText.value = colorPicker.value;
+    updateColorConfig(colorIndex, "baseHex", colorPicker.value);
+  });
+  
+  colorText.addEventListener("input", () => {
+    if (/^#[0-9A-Fa-f]{6}$/.test(colorText.value)) {
+      colorPicker.value = colorText.value;
+      updateColorConfig(colorIndex, "baseHex", colorText.value);
+    }
+  });
+}
+
+function updateColorConfig(colorIndex, property, value) {
+  // Update the config
+  const config = window.allColorScales[colorIndex].config;
+  
+  if (property === "name") {
+    config.name = `${value}-500`;
+  } else if (property === "baseHex") {
+    config.baseHex = value;
+  } else {
+    config[property] = parseFloat(value);
+  }
+  
+  // Regenerate just this color row
+  regenerateColorRow(colorIndex);
+  
+  // Update URL state
+  updateURLState();
+}
+
+function regenerateColorRow(colorIndex) {
+  console.log('regenerateColorRow called with colorIndex:', colorIndex);
+  console.log('scalesContainer:', scalesContainer);
+  console.log('window.allColorScales:', window.allColorScales);
+  
+  if (!scalesContainer) {
+    console.error('scalesContainer is null, trying to find it again');
+    const container = document.querySelector('.scales-container');
+    if (!container) {
+      console.error('Could not find .scales-container element');
+      return;
+    }
+    // Update the global reference
+    window.scalesContainer = container;
+  }
+  
+  const config = window.allColorScales[colorIndex].config;
+  console.log('config:', config);
+  
+  const containerToUse = scalesContainer || window.scalesContainer;
+  const oldRow = containerToUse.children[colorIndex];
+  console.log('oldRow:', oldRow);
+  
+  // Generate new row
+  const newRow = createScaleRow(config, colorIndex);
+  
+  // Replace old row
+  containerToUse.replaceChild(newRow, oldRow);
+  
+  // Update global scales array
+  window.allColorScales[colorIndex] = generateScaleData(config, colorIndex);
+  
+  // Keep editor open if this color was selected
+  if (selectedColorIndex === colorIndex) {
+    newRow.querySelector(".color-checkbox").checked = true;
+    newRow.querySelector(".color-row-checkbox").style.opacity = "1";
+  }
+}
+
+function generateScaleData(config, colorIndex) {
+  const actualStepsCount = config.stepsCount || currentStepsCount || stepsCount;
+  const [L01, C04, Hdeg] = new Color(config.baseHex).to("oklch").coords;
+  const baseL = L01 * 100;
+  const baseC = C04;
+  const baseH = Hdeg;
+
+  const options = {
+    baseL,
+    baseC,
+    baseH,
+    startL: config.startL ?? defaults.startL,
+    startHueShift: config.startHueShift,
+    endL: config.endL ?? defaults.endL,
+    endHueShift: config.endHueShift,
+    stepsCount: actualStepsCount,
+    tintStartS: config.tintStartS ?? defaults.tintStartS,
+    tintEndS: config.tintEndS ?? defaults.tintEndS,
+    shadeStartS: config.shadeStartS ?? defaults.shadeStartS,
+    shadeEndS: config.shadeEndS ?? defaults.shadeEndS,
+  };
+
+  const fullScaleLCH = generateTintShadeScale(options);
+  const fullScaleHex = fullScaleLCH.map(oklchToHex);
+  
+  return {
+    name: config.name,
+    hexValues: fullScaleHex,
+    lchValues: fullScaleLCH,
+    config: config
+  };
+}
+
+// URL state management functions
+function updateURLState() {
+  const params = new URLSearchParams();
+  
+  window.allColorScales.forEach((scale, index) => {
+    const config = scale.config;
+    const colorData = {
+      name: config.name,
+      baseHex: config.baseHex,
+      startL: config.startL,
+      endL: config.endL,
+      startHueShift: config.startHueShift,
+      endHueShift: config.endHueShift,
+      tintStartS: config.tintStartS,
+      tintEndS: config.tintEndS,
+      shadeStartS: config.shadeStartS,
+      shadeEndS: config.shadeEndS
+    };
+    
+    params.set(`c${index}`, JSON.stringify(colorData));
+  });
+  
+  params.set('steps', currentStepsCount.toString());
+  
+  const newURL = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState({}, '', newURL);
+}
+
+function loadURLState() {
+  const params = new URLSearchParams(window.location.search);
+  
+  // Load step count
+  if (params.has('steps')) {
+    currentStepsCount = parseInt(params.get('steps'));
+  }
+  
+  // Load color configurations
+  const urlConfigs = [];
+  let index = 0;
+  while (params.has(`c${index}`)) {
+    try {
+      const colorData = JSON.parse(params.get(`c${index}`));
+      urlConfigs.push(colorData);
+    } catch (e) {
+      console.warn(`Failed to parse color config ${index}:`, e);
+    }
+    index++;
+  }
+  
+  // If we have URL configs, use them instead of defaults
+  if (urlConfigs.length > 0) {
+    return urlConfigs;
+  }
+  
+  return null;
+}
 
 /* Finally, hook everything up: */
+// Load URL state first
+const urlConfigs = loadURLState();
+
 // Clear global storage and generate all scales first
 window.allColorScales = [];
 
-const scalesContainer = document.getElementById("scales");
-colorConfigs.forEach(cfg => {
-  const row = createScaleRow(cfg);
+// Get the container element and make it globally accessible
+const scalesContainer = document.querySelector('.scales-container');
+window.scalesContainer = scalesContainer;
+
+console.log('Initial scalesContainer setup:', scalesContainer);
+
+// Initialize with default configs
+const configsToUse = urlConfigs || colorConfigs;
+configsToUse.forEach((cfg, index) => {
+  const row = createScaleRow(cfg, index);
   scalesContainer.appendChild(row);
 });
 
-// Create scale labels after all data is generated
-createScaleLabels();
+// Make hideColorEditor globally available
+window.hideColorEditor = hideColorEditor;
 
 // Dark mode toggle functionality
 function initDarkMode() {
@@ -288,8 +611,12 @@ function generateGlobalColorsCss() {
 
 function drawCurve(svgId, curves) {
   const svg = document.getElementById(svgId);
-  if (!svg) return; // Guard against missing elements
+  if (!svg) {
+    console.error(`SVG element with id ${svgId} not found`);
+    return;
+  }
 
+  // Clear existing content
   svg.innerHTML = '';
 
   // Add grid lines
@@ -298,140 +625,139 @@ function drawCurve(svgId, curves) {
     const y = Math.round((i / 4) * 180 + 10);
 
     // Vertical grid lines
-    svg.innerHTML += `<line x1="${x}" y1="10" x2="${x}" y2="190" stroke="var(--border-norm)" stroke-width="1" shape-rendering="crispEdges"/>`;
+    const vLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    vLine.setAttribute("x1", x);
+    vLine.setAttribute("y1", 10);
+    vLine.setAttribute("x2", x);
+    vLine.setAttribute("y2", 190);
+    vLine.setAttribute("stroke", "var(--border-norm)");
+    vLine.setAttribute("stroke-width", "1");
+    vLine.setAttribute("shape-rendering", "crispEdges");
+    svg.appendChild(vLine);
+
     // Horizontal grid lines
-    svg.innerHTML += `<line x1="10" y1="${y}" x2="290" y2="${y}" stroke="var(--border-norm)" stroke-width="1" shape-rendering="crispEdges"/>`;
+    const hLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    hLine.setAttribute("x1", 10);
+    hLine.setAttribute("y1", y);
+    hLine.setAttribute("x2", 290);
+    hLine.setAttribute("y2", y);
+    hLine.setAttribute("stroke", "var(--border-norm)");
+    hLine.setAttribute("stroke-width", "1");
+    hLine.setAttribute("shape-rendering", "crispEdges");
+    svg.appendChild(hLine);
   }
   
   // Draw each curve
   curves.forEach(curve => {
+    console.log(`Drawing curve ${curve.name} with easing ${curve.easing}`);
     const points = [];
     const steps = 100;
     
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
-      const easedValue = ease(t, curve.easing);
+      // Use standard easing functions directly for visualization
+      let easedValue;
+      switch (curve.easing) {
+        case 'linear':
+          easedValue = t;
+          break;
+        case 'easeInOutSine':
+          easedValue = -(Math.cos(Math.PI * t) - 1) / 2;
+          break;
+        case 'easeInOutQuad':
+          easedValue = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          break;
+        case 'easeInOutCubic':
+          easedValue = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          break;
+        case 'easeInOutQuart':
+          easedValue = t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+          break;
+        case 'easeInOutQuint':
+          easedValue = t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+          break;
+        default:
+          console.warn(`Unknown easing type: ${curve.easing}, falling back to linear`);
+          easedValue = t; // fallback to linear
+      }
       const x = 10 + t * 280;
       const y = 190 - easedValue * 180; // Flip Y axis
       points.push(`${x},${y}`);
     }
     
     const pathData = `M${points.join(' L')}`;
-    svg.innerHTML += `<path d="${pathData}" fill="none" stroke="${curve.color}" stroke-width="1" opacity="0.8" shape-rendering="geometricPrecision"/>`;
+    console.log(`Generated path data for ${curve.name}:`, pathData);
+    
+    // Create path element
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", pathData);
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", curve.color);
+    path.setAttribute("stroke-width", "2");
+    path.setAttribute("opacity", "0.9");
+    path.setAttribute("shape-rendering", "geometricPrecision");
+    
+    // Append path to SVG
+    svg.appendChild(path);
   });
 }
 
-// Draw easing curves using simplified curve names
+// Update the curve colors to use fixed hex values matching the legend
 function drawEasingCurves() {
-  // Use consistent curves regardless of step count
-  const tintCurve = "bezierTint";
-  const shadeCurve = "bezierShade";
-  const tintHueCurve = "bezierTintHue";
-  const shadeHueCurve = "bezierShadeHue";
+  const curves = [
+    { name: 'L', easing: curveSettings.lightness, color: '#EE3A59' },  // Lightness - red
+    { name: 'S', easing: curveSettings.saturation, color: '#3d88fd' },  // Saturation - blue
+    { name: 'H', easing: curveSettings.hue, color: '#14b8a6' }  // Hue - teal
+  ];
   
-  // Draw tint curves
-  drawCurve('tint-curve', [
-    { name: 'L', easing: tintCurve, color: '#EE3A59' },  // rose-500
-    { name: 'S', easing: 'bezierTintSaturation', color: '#3d88fd' },  // blue-500
-    { name: 'H', easing: tintHueCurve, color: '#14b8a6' }  // teal-500
-  ]);
-  
-  // Draw shade curves
-  drawCurve('shade-curve', [
-    { name: 'L', easing: shadeCurve, color: '#EE3A59' },  // rose-500
-    { name: 'S', easing: 'bezierShadeSaturation', color: '#3d88fd' },  // blue-500
-    { name: 'H', easing: shadeHueCurve, color: '#14b8a6' }  // teal-500
-  ]);
+  drawCurve('tint-curve', curves);
+  drawCurve('shade-curve', curves);
 }
 
 // Update regenerateScales to include curve drawing
 function regenerateScales() {
   // Clear existing scales
-  const scalesContainer = document.getElementById("scales");
   scalesContainer.innerHTML = "";
   window.allColorScales = [];
   
-  // Create new scale labels
-  createScaleLabels();
+  // Hide color editor if open
+  hideColorEditor();
+  
+  // Use current configurations (might be from URL)
+  const currentConfigs = window.allColorScales.length > 0 
+    ? window.allColorScales.map(s => s.config)
+    : colorConfigs;
   
   // Regenerate all color rows
-  colorConfigs.forEach(cfg => {
-    const row = createScaleRow({...cfg, stepsCount: currentStepsCount});
+  currentConfigs.forEach((cfg, index) => {
+    const row = createScaleRow({...cfg, stepsCount: currentStepsCount}, index);
     scalesContainer.appendChild(row);
   });
 
   // Generate the global-colors.css file
   generateGlobalColorsCss();
+  
+  // Update URL state
+  updateURLState();
+
+  // Redraw the curves to reflect any changes in curve settings
+  drawEasingCurves();
 }
 
-// Update createScaleLabels to use dynamic stepsCount  
-function createScaleLabels() {
-  const count = currentStepsCount;
-  const baseLeft  = [50, 100, 200, 300, 400];
-  const baseRight = [600, 700, 800, 900, 950];
-  const midLeft   = [150, 250, 350, 450];
-  const midRight  = [550, 650, 750, 850];
-  const extraTotal   = count - 11;
-  const extrasPerSide = extraTotal / 2;
+// Update the steps count and regenerate
+function updateStepsCount(newCount) {
+  currentStepsCount = newCount;
+  regenerateScales();
+}
 
-  // Build left (tints)
-  const leftStops = baseLeft.slice();
-  for (let i = 0; i < extrasPerSide; i++) {
-    leftStops.push(midLeft[i]);
-  }
-  leftStops.sort((a,b)=>a-b);
-
-  // Build right (shades)
-  const rightStops = baseRight.slice();
-  for (let i = 0; i < extrasPerSide; i++) {
-    rightStops.push(midRight[midRight.length - 1 - i]);
-  }
-  rightStops.sort((a,b)=>a-b);
-
-  const steps = [...leftStops, 500, ...rightStops];
-  const labelRow = document.getElementById("scale-labels");
-  labelRow.innerHTML = "";
-  steps.forEach((num, stepIndex) => {
-    const lbl = document.createElement("div");
-    lbl.className = "scale-label";
-    lbl.textContent = num;
-    lbl.style.cursor = "pointer";
-    
-    // Add tooltip for scale label
-    const labelTooltip = document.createElement("div");
-    labelTooltip.className = "tooltip";
-    lbl.appendChild(labelTooltip);
-
-    // Add hover and click functionality
-    lbl.addEventListener("mouseenter", () => {
-      labelTooltip.textContent = "Copy hex values";
-    });
-
-    lbl.addEventListener("mouseleave", () => {
-      labelTooltip.textContent = "";
-    });
-
-    lbl.addEventListener("click", async () => {
-      // Collect hex values at this step index from all colors
-      const hexValues = window.allColorScales.map(scale => scale.hexValues[stepIndex]);
-      const hexString = hexValues.join(", ");
-      
-      await navigator.clipboard.writeText(hexString);
-      
-      // Show confirmation
-      labelTooltip.textContent = "Copied to clipboard!";
-      setTimeout(() => {
-        labelTooltip.textContent = "Copy hex values";
-      }, 1000);
-    });
-    
-    labelRow.appendChild(lbl);
-  });
-};
+// Force redraw of curves
+function redrawCurves() {
+  console.log('Redrawing curves with settings:', curveSettings);
+  drawEasingCurves();
+}
 
 // Generate initial color scales and draw curves
 regenerateScales();
-drawEasingCurves();
 
 // Initialize tab switcher
 initTabSwitcher();

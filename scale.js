@@ -3,79 +3,67 @@ import Color from "https://colorjs.io/dist/color.js";
 import { oklchToHex } from "./colors-utilities.js";
 import { oklchToOKhsl, okhslToOKLCH } from "./okhsl.js";
 
+// Export curve settings for use in other modules
+export const curveSettings = {
+  lightness: "easeInOutCubic",  // Quint for lightness
+  saturation: "easeInOutQuad",  // Gentle S-curve for saturation
+  hue: "linear"                 // Linear for hue shifts
+};
+
 /**
  * Easing function that takes a string name and returns the appropriate curve
  * @param {number} t - progress value from 0 to 1
  * @param {string} easingType - one of: "linear", "bezierTint-11", "bezierTint-13", "bezierShade-11", "bezierShade-13"
  * @returns {number} - eased value from 0 to 1
  */
-// Cubic bezier implementation - matches CSS cubic-bezier() exactly
-function cubicBezier(t, x1, y1, x2, y2) {
-  // For cubic bezier curve with control points (x1,y1) and (x2,y2)
-  // Start point is (0,0), end point is (1,1)
-  
-  // Use binary search to find the correct t value for given x
-  function bezierX(t) {
-    return 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
-  }
-  
-  function bezierY(t) {
-    return 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
-  }
-  
-  // Binary search to find t that gives us the input x
-  let start = 0, end = 1, mid;
-  const precision = 0.0001;
-  
-  for (let i = 0; i < 20; i++) {
-    mid = (start + end) / 2;
-    const x = bezierX(mid);
-    
-    if (Math.abs(x - t) < precision) break;
-    
-    if (x < t) {
-      start = mid;
-    } else {
-      end = mid;
-    }
-  }
-  
-  return bezierY(mid);
+// Standard easing functions - faster and more predictable than Bézier curves
+function easeLinear(t) {
+  return t;
 }
 
-export function ease(t, easingType = "easeInSine") {
+function easeInOutSine(t) {
+  return -(Math.cos(Math.PI * t) - 1) / 2;
+}
+
+function easeInOutQuad(t) {
+  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+}
+
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function easeInOutQuart(t) {
+  return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+}
+
+function easeInOutQuint(t) {
+  return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+}
+
+export function ease(t, easingType = "easeInOutSine") {
   switch (easingType) {
     case "linear":
-      return t;
+      return easeLinear(t);
     
-    case "bezierTint":
-      // cubic-bezier(0.6, 0.2, 0.75, 1.0) - gentle start, strong acceleration at end
-      return cubicBezier(t, 0.8, 0.05, 0.6, 0.75);
+    case "easeInOutSine":
+      return easeInOutSine(t);
     
-    case "bezierShade":
-      // Modified to create S-shaped curve with brighter middle section:
-      // - First control point (0.6, 0.1) maintains gentle start
-      // - Second control point (0.3, 0.5) lifts the middle section
-      return cubicBezier(t, 0.7, 0.075, 0.3, 0.5);
+    case "easeInOutQuad":
+      return easeInOutQuad(t);
     
-    case "bezierTintHue":
-    case "bezierShadeHue":
-      // Perfectly linear curve for hue in both tints and shades
-      return t;
+    case "easeInOutCubic":
+      return easeInOutCubic(t);
     
-    case "bezierTintSaturation":
-      // Tint saturation curve - slower acceleration, later deceleration
-      // cubic-bezier(0.6, 0.1, 0.65, 1.0) - between harmonic and lightness curve
-      return cubicBezier(t, 0.6, 0.1, 0.65, 1.0);
+    case "easeInOutQuart":
+      return easeInOutQuart(t);
     
-    case "bezierShadeSaturation":
-      // Shade saturation curve - harmonic curve with equal acceleration/deceleration
-      // cubic-bezier(0.4, 0.0, 0.6, 1.0) - smooth S-curve with balanced transitions
-      return cubicBezier(t, 0.4, 0.0, 0.6, 1.0);
+    case "easeInOutQuint":
+      return easeInOutQuint(t);
     
     default:
-      console.warn(`Unknown easing type: ${easingType}, falling back to easeInSine`);
-      return 1 - Math.cos((t * Math.PI) / 2);
+      console.warn(`Unknown easing type: ${easingType}, falling back to linear`);
+      return easeLinear(t);
   }
 }
 
@@ -143,11 +131,8 @@ export function generatePerceptuallyUniformScale({
     throw new Error("stepsCount must be 11 or 13");
   }
   
-  // Use consistent curves regardless of step count
-  const tintCurve = "bezierTint";
-  const shadeCurve = "bezierShade";
-  const tintHueCurve = "bezierTintHue";
-  const shadeHueCurve = "bezierShadeHue";
+  // Use curve settings from the exported configuration
+  const { lightness, saturation, hue } = curveSettings;
 
   const N = stepsCount;
   const mid = Math.floor(N / 2);
@@ -164,15 +149,15 @@ export function generatePerceptuallyUniformScale({
       continue;
     }
     const t = i / mid;
-    const eL = ease(t, tintCurve);
-    const eH = ease(t, tintHueCurve);
+    const eL = ease(t, lightness);
+    const eH = ease(t, hue);
+    const eS = ease(t, saturation);
 
     // Calculate lightness and hue progression directly in OKLCH space
     const Li = startL + (baseL - startL) * eL;
     const Hi = H0 + startHueShift * (1 - eH);
     
-    // Calculate saturation progression using tint-specific bezier curve, then convert to chroma
-    const eS = ease(t, "bezierTintSaturation");  // Use tint curve with slower acceleration, later deceleration
+    // Calculate saturation progression
     const Si = tintStartS + (tintEndS - tintStartS) * eS;
     
     // Convert only saturation through OKhsl to get chroma, preserve our lightness
@@ -190,15 +175,15 @@ export function generatePerceptuallyUniformScale({
     const adjustedT = t < 0.2 
       ? t * 2
       : 0.4 + (t - 0.2) * 0.75;
-    const eL = ease(adjustedT, shadeCurve);
-    const eH = ease(t, shadeHueCurve);
+    const eL = ease(adjustedT, lightness);
+    const eH = ease(t, hue);
+    const eS = ease(t, saturation);
     
     // Calculate lightness and hue progression directly in OKLCH space
     const Li = baseL - (baseL - endL) * eL;
     const Hi = H0 + endHueShift * eH;
     
-    // Calculate saturation progression using shade-specific bezier curve, then convert to chroma
-    const eS = ease(t, "bezierShadeSaturation");  // Use harmonic curve for smooth saturation transitions
+    // Calculate saturation progression
     const Si = shadeStartS + (shadeEndS - shadeStartS) * eS;
     
     // Convert only saturation through OKhsl to get chroma, preserve our lightness
