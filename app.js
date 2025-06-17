@@ -1,6 +1,6 @@
 // app.js
 import Color from "https://colorjs.io/dist/color.js";
-import { generateTintShadeScale, ease, curveSettings } from "./scale.js";
+import { generatePerceptuallyUniformScale, ease, curveSettings } from "./scale.js";
 import { defaults, colorConfigs, stepsCount } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";
 
@@ -94,6 +94,9 @@ function createScaleRow({
     tintEndS:    overrides.tintEndS    ?? defaults.tintEndS,
     shadeStartS: overrides.shadeStartS ?? defaults.shadeStartS,
     shadeEndS:   overrides.shadeEndS   ?? defaults.shadeEndS,
+    // Rate parameters from defaults and overrides
+    tintLRate:   overrides.tintLRate   ?? defaults.tintLRate,
+    shadeLRate:  overrides.shadeLRate  ?? defaults.shadeLRate,
   };
 
   // Debug: Log the defaults and final options
@@ -101,7 +104,7 @@ function createScaleRow({
   console.log('overrides object:', overrides);
   console.log('final options:', options);
 
-  const fullScaleLCH = generateTintShadeScale(options);
+  const fullScaleLCH = generatePerceptuallyUniformScale(options);
   const fullScaleHex = fullScaleLCH.map(oklchToHex);
   
   // Store this scale's data globally for vertical copying
@@ -280,14 +283,14 @@ function populateColorEditor(colorIndex) {
         <input type="number" id="end-luminance" value="${config.endL ?? defaults.endL}" min="0" max="100" step="0.1" data-property="endL">
       </div>
       <div class="form-group">
-        <label>Tint rate:</label>
-        <input type="number" id="tint-rate" value="${config.tintRate ?? defaults.tintRate}" min="0" max="1" step="0.01" data-property="tintRate">
-        <span class="form-hint">How much of the way to base-500 the tints reach (0-1)</span>
+        <label>Tint lightness rate:</label>
+        <input type="number" id="tint-l-rate" value="${config.tintLRate ?? defaults.tintLRate}" min="1" max="2" step="0.01" data-property="tintLRate">
+        <span class="form-hint">Tint target lightness as % of base-500 (1.0 = 100%, 1.1 = 110%). Must be ≥ 1.0</span>
       </div>
       <div class="form-group">
-        <label>Shade rate:</label>
-        <input type="number" id="shade-rate" value="${config.shadeRate ?? defaults.shadeRate}" min="0" max="1" step="0.01" data-property="shadeRate">
-        <span class="form-hint">How much of the way to endL the shades reach (0-1)</span>
+        <label>Shade lightness rate:</label>
+        <input type="number" id="shade-l-rate" value="${config.shadeLRate ?? defaults.shadeLRate}" min="0" max="1" step="0.01" data-property="shadeLRate">
+        <span class="form-hint">Shade start lightness as % of base-500 (1.0 = 100%, 0.9 = 90%). Must be ≤ 1.0</span>
       </div>
       <div class="form-group">
         <label>Tint start saturation:</label>
@@ -419,9 +422,11 @@ function generateScaleData(config, colorIndex) {
     tintEndS: config.tintEndS ?? defaults.tintEndS,
     shadeStartS: config.shadeStartS ?? defaults.shadeStartS,
     shadeEndS: config.shadeEndS ?? defaults.shadeEndS,
+    tintLRate: config.tintLRate ?? defaults.tintLRate,
+    shadeLRate: config.shadeLRate ?? defaults.shadeLRate,
   };
 
-  const fullScaleLCH = generateTintShadeScale(options);
+  const fullScaleLCH = generatePerceptuallyUniformScale(options);
   const fullScaleHex = fullScaleLCH.map(oklchToHex);
   
   return {
@@ -448,7 +453,9 @@ function updateURLState() {
       tintStartS: config.tintStartS,
       tintEndS: config.tintEndS,
       shadeStartS: config.shadeStartS,
-      shadeEndS: config.shadeEndS
+      shadeEndS: config.shadeEndS,
+      tintLRate: config.tintLRate,
+      shadeLRate: config.shadeLRate
     };
     
     params.set(`c${index}`, JSON.stringify(colorData));

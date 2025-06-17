@@ -1,6 +1,6 @@
 // colors.js
 
-import { generateTintShadeScale } from "./scale.js";
+import { generatePerceptuallyUniformScale } from "./scale.js";
 import Color from "https://colorjs.io/dist/color.js";
 
 // 1) Export stepsCount (odd integer, e.g. 11, 13, 15…)
@@ -20,9 +20,9 @@ export const defaults = {
   shadeStartS: 0.85,   // Saturation starting from base-500 (without affecting base-500)
   shadeEndS:   0.3,   // Saturation at shade-950 (darkest)    
 
-  // Rate of progression for tints and shades (0-1)
-  tintRate: 1.0,    // How much of the way to base-500 the tints reach (1.0 = 100%)
-  shadeRate: 1.0,   // How much of the way to endL the shades reach (1.0 = 100%)
+  // Rate of progression for tints and shades
+  tintLRate: 1.05,    // Tint lightness rate: progression from startL to (tintLRate × base-500 lightness). Must be ≥ 1.0
+  shadeLRate: 0.98,   // Shade lightness rate: progression from (shadeLRate × base-500 lightness) to endL. Must be ≤ 1.0
 
   // Note: Uses OKhsl color space for perceptually uniform saturation across all hues.
   // Bezier curves control lightness and hue progression for smooth transitions.
