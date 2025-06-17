@@ -14,15 +14,15 @@ export const defaults = {
   endL:     19,  
   // Tint saturation progression (0-1) - from step 50 to base-500
   tintStartS: 0.1,    // Saturation at tint-50 (lightest)
-  tintEndS:   0.9,    // Saturation approaching base-500 (without affecting base-500)
+  tintEndS:   0.95,    // Saturation approaching base-500 (without affecting base-500)
   
   // Shade saturation progression (0-1) - from base-500 to step 950  
   shadeStartS: 0.85,   // Saturation starting from base-500 (without affecting base-500)
-  shadeEndS:   0.3,   // Saturation at shade-950 (darkest)    
+  shadeEndS:   0.25,   // Saturation at shade-950 (darkest)    
 
   // Rate of progression for tints and shades
-  tintLRate: 1.05,    // Tint lightness rate: progression from startL to (tintLRate × base-500 lightness). Must be ≥ 1.0
-  shadeLRate: 0.98,   // Shade lightness rate: progression from (shadeLRate × base-500 lightness) to endL. Must be ≤ 1.0
+  tintLRate: 0.99,    // Tint lightness rate: progression from startL to (tintLRate × base-500 lightness). Must be ≥ 1.0
+  shadeLRate: 0.97,   // Shade lightness rate: progression from (shadeLRate × base-500 lightness) to endL. Must be ≤ 1.0
 
   // Note: Uses OKhsl color space for perceptually uniform saturation across all hues.
   // Bezier curves control lightness and hue progression for smooth transitions.
@@ -36,21 +36,21 @@ export const colorConfigs = [
     baseHex: "#F23441",
     startHueShift: -8.0,
     endHueShift:    -5,
-    shadeStartS: 0.9
+    shadeStartS: 0.95
   },
   {
     name: "orange-500",
     baseHex: "#f67b29",
     startHueShift: 26,
     endHueShift:   -8,
-    shadeStartS: 0.95
+    shadeStartS: 0.98
   },
   {
     name: "amber-500",
     baseHex: "#F5A314",
     startHueShift: 20,
     endHueShift:   -25,
-    shadeStartS: 0.95
+    shadeStartS: 0.98
     
   },
   {
@@ -58,7 +58,7 @@ export const colorConfigs = [
     baseHex: "#FAB905",
     startHueShift: 15,
     endHueShift:   -32,
-    shadeStartS: 0.9
+    shadeStartS: 0.95
     
   },
   {
@@ -66,7 +66,8 @@ export const colorConfigs = [
     baseHex: "#C5C020",
     startHueShift: 0,
     endHueShift:   -5,
-    shadeStartS: 0.9
+    shadeStartS: 0.85,
+    tintEndS:   0.85
     
   },
   {
@@ -156,7 +157,7 @@ export const colorConfigs = [
     baseHex: "#EE3A59",
     startHueShift:  -4.0,
     endHueShift:    -12,
-    shadeStartS: 0.9
+    shadeStartS: 0.85
   },
   {
     name: "sand-500",

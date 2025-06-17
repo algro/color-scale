@@ -5,9 +5,11 @@ import { oklchToOKhsl, okhslToOKLCH } from "./okhsl.js";
 
 // Export curve settings for use in other modules
 export const curveSettings = {
-  lightness: "easeInOutQuad",  
-  saturation: "easeInOutCubic",  
-  hue: "linear"                 
+  tintLightness: "customTintCurve",
+  shadeLightness: "customShadeCurve", 
+  tintSaturation: "customTintCurve",
+  shadeSaturation: "customShadeCurve",
+  hue: "linear"
 };
 
 /**
@@ -41,6 +43,42 @@ function easeInOutQuint(t) {
   return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
 }
 
+
+
+// Cubic bezier implementation - matches CSS cubic-bezier() exactly
+function cubicBezier(t, x1, y1, x2, y2) {
+  // For cubic bezier curve with control points (x1,y1) and (x2,y2)
+  // Start point is (0,0), end point is (1,1)
+  
+  // Use binary search to find the correct t value for given x
+  function bezierX(t) {
+    return 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
+  }
+  
+  function bezierY(t) {
+    return 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
+  }
+  
+  // Binary search to find t that gives us the input x
+  let start = 0, end = 1, mid;
+  const precision = 0.0001;
+  
+  for (let i = 0; i < 20; i++) {
+    mid = (start + end) / 2;
+    const x = bezierX(mid);
+    
+    if (Math.abs(x - t) < precision) break;
+    
+    if (x < t) {
+      start = mid;
+    } else {
+      end = mid;
+    }
+  }
+  
+  return bezierY(mid);
+}
+
 export function ease(t, easingType = "easeInOutSine") {
   switch (easingType) {
     case "linear":
@@ -60,6 +98,15 @@ export function ease(t, easingType = "easeInOutSine") {
     
     case "easeInOutQuint":
       return easeInOutQuint(t);
+    
+    case "customTintCurve":
+      // Custom curve for tints - gentle start, strong acceleration at end
+      return cubicBezier(t, 0.8, 0.17, 0.6, 0.90);
+    
+    case "customShadeCurve":
+      // Custom curve for shades - mirrored tint curve (strong start, gentle end)
+      // Direct control points for opposite behavior to tint curve
+      return cubicBezier(t, 0.4, 0.01, 0.4, 0.5);
     
     default:
       console.warn(`Unknown easing type: ${easingType}, falling back to linear`);
@@ -173,7 +220,7 @@ export function generatePerceptuallyUniformScale({
   }
   
   // Use curve settings from the exported configuration
-  const { lightness, saturation, hue } = curveSettings;
+  const { tintLightness, shadeLightness, tintSaturation, shadeSaturation, hue } = curveSettings;
 
   const N = stepsCount;
   const mid = Math.floor(N / 2);
@@ -194,9 +241,9 @@ export function generatePerceptuallyUniformScale({
       continue;
     }
     const t = i / mid;
-    const eL = ease(t, lightness);
+    const eL = ease(t, tintLightness);  // Use tint-specific lightness curve
     const eH = ease(t, hue);
-    const eS = ease(t, saturation);
+    const eS = ease(t, tintSaturation);
 
     // Calculate lightness progression from startL to tintTargetL
     const Li = startL + (tintTargetL - startL) * eL;
@@ -217,9 +264,9 @@ export function generatePerceptuallyUniformScale({
   for (let i = mid + 1; i < N; i++) {
     const k = i - mid;
     const t = k / (N - mid - 1); // Normalize to 0-1 range for shades
-    const eL = ease(t, lightness);
+    const eL = ease(t, shadeLightness);  // Use shade-specific lightness curve
     const eH = ease(t, hue);
-    const eS = ease(t, saturation);
+    const eS = ease(t, shadeSaturation);
     
     // Calculate lightness progression from shadeStartL to endL
     const Li = shadeStartL + (endL - shadeStartL) * eL;

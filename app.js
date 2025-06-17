@@ -4,8 +4,6 @@ import { generatePerceptuallyUniformScale, ease, curveSettings } from "./scale.j
 import { defaults, colorConfigs, stepsCount } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";
 
-
-
 /* 1) Put stepsCount into CSS var (if you need clamp() later) */
 document.documentElement.style.setProperty("--swatch-count", stepsCount);
 
@@ -15,7 +13,6 @@ window.allColorScales = [];
 // Theme and step count management - declare early
 let currentStepsCount = 13;
 let currentTheme = 'slate';
-let selectedColorIndex = -1; // Track which color is selected for editing
 
 window.useOklab = false;
 window.addEventListener("keydown", (e) => {
@@ -24,7 +21,7 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// URL state management - similar to ColorBox.io
+// Get steps for current count
 function getStepsForCurrentCount() {
   const count = currentStepsCount;
   const baseLeft  = [50, 100, 200, 300, 400];
@@ -99,15 +96,10 @@ function createScaleRow({
     shadeLRate:  overrides.shadeLRate  ?? defaults.shadeLRate,
   };
 
-  // Debug: Log the defaults and final options
-  console.log('defaults object:', defaults);
-  console.log('overrides object:', overrides);
-  console.log('final options:', options);
-
   const fullScaleLCH = generatePerceptuallyUniformScale(options);
   const fullScaleHex = fullScaleLCH.map(oklchToHex);
   
-  // Store this scale's data globally for vertical copying
+  // Store this scale's data globally
   window.allColorScales.push({
     name: name,
     hexValues: fullScaleHex,
@@ -117,7 +109,6 @@ function createScaleRow({
 
   const row = document.createElement("div");
   row.className = "column scale-row";
-  row.dataset.rowIndex = rowIndex;
 
   const swatchContainer = document.createElement("div");
   swatchContainer.className = "swatch-container";
@@ -182,342 +173,10 @@ function createScaleRow({
     swatchContainer.appendChild(sw);
   });
 
-  // Create hover-activated checkbox
-  const checkboxContainer = document.createElement("div");
-  checkboxContainer.className = "color-row-checkbox";
-  
-  const checkbox = document.createElement("input");
-  checkbox.type = "radio"; // Use radio button for only one selection
-  checkbox.name = "color-selection";
-  checkbox.className = "color-checkbox";
-  checkbox.value = rowIndex;
-  
-  checkboxContainer.appendChild(checkbox);
-  
-  // Handle checkbox selection
-  checkbox.addEventListener("change", () => {
-    if (checkbox.checked) {
-      selectedColorIndex = rowIndex;
-      showColorEditor(rowIndex);
-    }
-  });
-
   row.appendChild(swatchContainer);
-  row.appendChild(checkboxContainer);
   
-  // Add hover effects for checkbox visibility
-  row.addEventListener("mouseenter", () => {
-    checkboxContainer.style.opacity = "1";
-  });
-  
-  row.addEventListener("mouseleave", () => {
-    if (!checkbox.checked) {
-      checkboxContainer.style.opacity = "0";
-    }
-  });
-
   return row;
 }
-
-// Show/hide color editor pane
-function showColorEditor(colorIndex) {
-  let editorPane = document.getElementById("color-editor-pane");
-  
-  if (!editorPane) {
-    // Create the editor pane
-    editorPane = document.createElement("div");
-    editorPane.id = "color-editor-pane";
-    editorPane.className = "color-editor-pane";
-    
-    const container = document.querySelector(".container");
-    container.appendChild(editorPane);
-  }
-  
-  // Show the pane
-  editorPane.style.display = "block";
-  
-  // Populate with current color's settings
-  populateColorEditor(colorIndex);
-}
-
-function hideColorEditor() {
-  const editorPane = document.getElementById("color-editor-pane");
-  if (editorPane) {
-    editorPane.style.display = "none";
-  }
-  selectedColorIndex = -1;
-  
-  // Uncheck all checkboxes
-  document.querySelectorAll(".color-checkbox").forEach(cb => {
-    cb.checked = false;
-    cb.closest(".color-row-checkbox").style.opacity = "0";
-  });
-}
-
-function populateColorEditor(colorIndex) {
-  const editorPane = document.getElementById("color-editor-pane");
-  const config = window.allColorScales[colorIndex].config;
-  const colorName = config.name.split("-")[0];
-  
-  editorPane.innerHTML = `
-    <div class="editor-header">
-      <h3>Color Settings</h3>
-      <button class="close-editor" onclick="hideColorEditor()">×</button>
-    </div>
-    <form class="color-form">
-      <div class="form-group">
-        <label>Name:</label>
-        <input type="text" id="color-name" value="${colorName}" data-property="name">
-      </div>
-      <div class="form-group">
-        <label>Color:</label>
-        <input type="color" id="color-base" value="${config.baseHex}" data-property="baseHex">
-        <input type="text" id="color-hex" value="${config.baseHex}" data-property="baseHex">
-      </div>
-      <div class="form-group">
-        <label>Start luminance:</label>
-        <input type="number" id="start-luminance" value="${config.startL ?? defaults.startL}" min="0" max="100" step="0.1" data-property="startL">
-      </div>
-      <div class="form-group">
-        <label>End luminance:</label>
-        <input type="number" id="end-luminance" value="${config.endL ?? defaults.endL}" min="0" max="100" step="0.1" data-property="endL">
-      </div>
-      <div class="form-group">
-        <label>Tint lightness rate:</label>
-        <input type="number" id="tint-l-rate" value="${config.tintLRate ?? defaults.tintLRate}" min="1" max="2" step="0.01" data-property="tintLRate">
-        <span class="form-hint">Tint target lightness as % of base-500 (1.0 = 100%, 1.1 = 110%). Must be ≥ 1.0</span>
-      </div>
-      <div class="form-group">
-        <label>Shade lightness rate:</label>
-        <input type="number" id="shade-l-rate" value="${config.shadeLRate ?? defaults.shadeLRate}" min="0" max="1" step="0.01" data-property="shadeLRate">
-        <span class="form-hint">Shade start lightness as % of base-500 (1.0 = 100%, 0.9 = 90%). Must be ≤ 1.0</span>
-      </div>
-      <div class="form-group">
-        <label>Tint start saturation:</label>
-        <input type="number" id="tint-start-sat" value="${config.tintStartS ?? defaults.tintStartS}" min="0" max="1" step="0.01" data-property="tintStartS">
-      </div>
-      <div class="form-group">
-        <label>Tint end saturation:</label>
-        <input type="number" id="tint-end-sat" value="${config.tintEndS ?? defaults.tintEndS}" min="0" max="1" step="0.01" data-property="tintEndS">
-      </div>
-      <div class="form-group">
-        <label>Shade start saturation:</label>
-        <input type="number" id="shade-start-sat" value="${config.shadeStartS ?? defaults.shadeStartS}" min="0" max="1" step="0.01" data-property="shadeStartS">
-      </div>
-      <div class="form-group">
-        <label>Shade end saturation:</label>
-        <input type="number" id="shade-end-sat" value="${config.shadeEndS ?? defaults.shadeEndS}" min="0" max="1" step="0.01" data-property="shadeEndS">
-      </div>
-      <div class="form-group">
-        <label>Start hue shift:</label>
-        <input type="number" id="start-hue-shift" value="${config.startHueShift}" min="-180" max="180" step="0.1" data-property="startHueShift">
-      </div>
-      <div class="form-group">
-        <label>End hue shift:</label>
-        <input type="number" id="end-hue-shift" value="${config.endHueShift}" min="-180" max="180" step="0.1" data-property="endHueShift">
-      </div>
-    </form>
-  `;
-  
-  // Add event listeners for real-time updates
-  const form = editorPane.querySelector(".color-form");
-  form.addEventListener("input", (e) => {
-    if (e.target.dataset.property) {
-      updateColorConfig(colorIndex, e.target.dataset.property, e.target.value);
-    }
-  });
-  
-  // Sync color picker and text input
-  const colorPicker = editorPane.querySelector("#color-base");
-  const colorText = editorPane.querySelector("#color-hex");
-  
-  colorPicker.addEventListener("input", () => {
-    colorText.value = colorPicker.value;
-    updateColorConfig(colorIndex, "baseHex", colorPicker.value);
-  });
-  
-  colorText.addEventListener("input", () => {
-    if (/^#[0-9A-Fa-f]{6}$/.test(colorText.value)) {
-      colorPicker.value = colorText.value;
-      updateColorConfig(colorIndex, "baseHex", colorText.value);
-    }
-  });
-}
-
-function updateColorConfig(colorIndex, property, value) {
-  // Update the config
-  const config = window.allColorScales[colorIndex].config;
-  
-  if (property === "name") {
-    config.name = `${value}-500`;
-  } else if (property === "baseHex") {
-    config.baseHex = value;
-  } else {
-    config[property] = parseFloat(value);
-  }
-  
-  // Regenerate just this color row
-  regenerateColorRow(colorIndex);
-  
-  // Update URL state
-  updateURLState();
-}
-
-function regenerateColorRow(colorIndex) {
-  console.log('regenerateColorRow called with colorIndex:', colorIndex);
-  console.log('scalesContainer:', scalesContainer);
-  console.log('window.allColorScales:', window.allColorScales);
-  
-  if (!scalesContainer) {
-    console.error('scalesContainer is null, trying to find it again');
-    const container = document.querySelector('.scales-container');
-    if (!container) {
-      console.error('Could not find .scales-container element');
-      return;
-    }
-    // Update the global reference
-    window.scalesContainer = container;
-  }
-  
-  const config = window.allColorScales[colorIndex].config;
-  console.log('config:', config);
-  
-  const containerToUse = scalesContainer || window.scalesContainer;
-  const oldRow = containerToUse.children[colorIndex];
-  console.log('oldRow:', oldRow);
-  
-  // Generate new row
-  const newRow = createScaleRow(config, colorIndex);
-  
-  // Replace old row
-  containerToUse.replaceChild(newRow, oldRow);
-  
-  // Update global scales array
-  window.allColorScales[colorIndex] = generateScaleData(config, colorIndex);
-  
-  // Keep editor open if this color was selected
-  if (selectedColorIndex === colorIndex) {
-    newRow.querySelector(".color-checkbox").checked = true;
-    newRow.querySelector(".color-row-checkbox").style.opacity = "1";
-  }
-}
-
-function generateScaleData(config, colorIndex) {
-  const actualStepsCount = config.stepsCount || currentStepsCount || stepsCount;
-  const [L01, C04, Hdeg] = new Color(config.baseHex).to("oklch").coords;
-  const baseL = L01 * 100;
-  const baseC = C04;
-  const baseH = Hdeg;
-
-  const options = {
-    baseL,
-    baseC,
-    baseH,
-    startL: config.startL ?? defaults.startL,
-    startHueShift: config.startHueShift,
-    endL: config.endL ?? defaults.endL,
-    endHueShift: config.endHueShift,
-    stepsCount: actualStepsCount,
-    tintStartS: config.tintStartS ?? defaults.tintStartS,
-    tintEndS: config.tintEndS ?? defaults.tintEndS,
-    shadeStartS: config.shadeStartS ?? defaults.shadeStartS,
-    shadeEndS: config.shadeEndS ?? defaults.shadeEndS,
-    tintLRate: config.tintLRate ?? defaults.tintLRate,
-    shadeLRate: config.shadeLRate ?? defaults.shadeLRate,
-  };
-
-  const fullScaleLCH = generatePerceptuallyUniformScale(options);
-  const fullScaleHex = fullScaleLCH.map(oklchToHex);
-  
-  return {
-    name: config.name,
-    hexValues: fullScaleHex,
-    lchValues: fullScaleLCH,
-    config: config
-  };
-}
-
-// URL state management functions
-function updateURLState() {
-  const params = new URLSearchParams();
-  
-  window.allColorScales.forEach((scale, index) => {
-    const config = scale.config;
-    const colorData = {
-      name: config.name,
-      baseHex: config.baseHex,
-      startL: config.startL,
-      endL: config.endL,
-      startHueShift: config.startHueShift,
-      endHueShift: config.endHueShift,
-      tintStartS: config.tintStartS,
-      tintEndS: config.tintEndS,
-      shadeStartS: config.shadeStartS,
-      shadeEndS: config.shadeEndS,
-      tintLRate: config.tintLRate,
-      shadeLRate: config.shadeLRate
-    };
-    
-    params.set(`c${index}`, JSON.stringify(colorData));
-  });
-  
-  params.set('steps', currentStepsCount.toString());
-  
-  const newURL = `${window.location.pathname}?${params.toString()}`;
-  window.history.replaceState({}, '', newURL);
-}
-
-function loadURLState() {
-  const params = new URLSearchParams(window.location.search);
-  
-  // Load step count
-  if (params.has('steps')) {
-    currentStepsCount = parseInt(params.get('steps'));
-  }
-  
-  // Load color configurations
-  const urlConfigs = [];
-  let index = 0;
-  while (params.has(`c${index}`)) {
-    try {
-      const colorData = JSON.parse(params.get(`c${index}`));
-      urlConfigs.push(colorData);
-    } catch (e) {
-      console.warn(`Failed to parse color config ${index}:`, e);
-    }
-    index++;
-  }
-  
-  // If we have URL configs, use them instead of defaults
-  if (urlConfigs.length > 0) {
-    return urlConfigs;
-  }
-  
-  return null;
-}
-
-/* Finally, hook everything up: */
-// Load URL state first
-const urlConfigs = loadURLState();
-
-// Clear global storage and generate all scales first
-window.allColorScales = [];
-
-// Get the container element and make it globally accessible
-const scalesContainer = document.querySelector('.scales-container');
-window.scalesContainer = scalesContainer;
-
-console.log('Initial scalesContainer setup:', scalesContainer);
-
-// Initialize with default configs
-const configsToUse = urlConfigs || colorConfigs;
-configsToUse.forEach((cfg, index) => {
-  const row = createScaleRow(cfg, index);
-  scalesContainer.appendChild(row);
-});
-
-// Make hideColorEditor globally available
-window.hideColorEditor = hideColorEditor;
 
 // Dark mode toggle functionality
 function initDarkMode() {
@@ -536,16 +195,10 @@ function toggleDarkMode() {
   
   document.documentElement.setAttribute('data-theme', newDarkMode);
   localStorage.setItem('theme', newDarkMode);
-  
-  // Update theme colors for new dark/light mode using current color theme
-  updateThemeColors(currentTheme);
 }
 
 // Initialize dark mode
 initDarkMode();
-
-// Add event listener to toggle button
-document.getElementById('dark-mode-toggle').addEventListener('click', toggleDarkMode);
 
 // Handle tab switching
 function initTabSwitcher() {
@@ -572,7 +225,6 @@ function initTabSwitcher() {
 
 // Function to generate CSS content for all color scales
 function generateGlobalColorsCss() {
-  console.log('Starting CSS generation...');
   
   // Update CSS variables directly in :root
   window.allColorScales.forEach(scale => {
@@ -613,7 +265,7 @@ function generateGlobalColorsCss() {
     });
   });
   
-  console.log('CSS variables updated in memory');
+  
 }
 
 function drawCurve(svgId, curves) {
@@ -656,44 +308,20 @@ function drawCurve(svgId, curves) {
   
   // Draw each curve
   curves.forEach(curve => {
-    console.log(`Drawing curve ${curve.name} with easing ${curve.easing}`);
     const points = [];
     const steps = 100;
     
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
-      // Use standard easing functions directly for visualization
-      let easedValue;
-      switch (curve.easing) {
-        case 'linear':
-          easedValue = t;
-          break;
-        case 'easeInOutSine':
-          easedValue = -(Math.cos(Math.PI * t) - 1) / 2;
-          break;
-        case 'easeInOutQuad':
-          easedValue = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-          break;
-        case 'easeInOutCubic':
-          easedValue = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-          break;
-        case 'easeInOutQuart':
-          easedValue = t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
-          break;
-        case 'easeInOutQuint':
-          easedValue = t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
-          break;
-        default:
-          console.warn(`Unknown easing type: ${curve.easing}, falling back to linear`);
-          easedValue = t; // fallback to linear
-      }
+      // Use the imported ease function to match the actual implementation
+      let easedValue = ease(t, curve.easing);
+      
       const x = 10 + t * 280;
       const y = 190 - easedValue * 180; // Flip Y axis
       points.push(`${x},${y}`);
     }
     
     const pathData = `M${points.join(' L')}`;
-    console.log(`Generated path data for ${curve.name}:`, pathData);
     
     // Create path element
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -709,43 +337,41 @@ function drawCurve(svgId, curves) {
   });
 }
 
-// Update the curve colors to use fixed hex values matching the legend
+// Draw separate curves for tints and shades sections
 function drawEasingCurves() {
-  const curves = [
-    { name: 'L', easing: curveSettings.lightness, color: '#EE3A59' },  // Lightness - red
-    { name: 'S', easing: curveSettings.saturation, color: '#3d88fd' },  // Saturation - blue
+  // Curves for the tint section (50 → 500)
+  const tintCurves = [
+    { name: 'Tint L', easing: curveSettings.tintLightness, color: '#EE3A59' },  // Tint Lightness - red
+    { name: 'Tint S', easing: curveSettings.tintSaturation, color: '#3d88fd' },  // Tint Saturation - blue
     { name: 'H', easing: curveSettings.hue, color: '#14b8a6' }  // Hue - teal
   ];
   
-  drawCurve('tint-curve', curves);
-  drawCurve('shade-curve', curves);
+  // Curves for the shade section (500 → 950)
+  const shadeCurves = [
+    { name: 'Shade L', easing: curveSettings.shadeLightness, color: '#FF6B8A' },  // Shade Lightness - light red
+    { name: 'Shade S', easing: curveSettings.shadeSaturation, color: '#87CEEB' },  // Shade Saturation - light blue
+    { name: 'H', easing: curveSettings.hue, color: '#14b8a6' }  // Hue - teal
+  ];
+  
+  drawCurve('tint-curve', tintCurves);
+  drawCurve('shade-curve', shadeCurves);
 }
 
 // Update regenerateScales to include curve drawing
 function regenerateScales() {
   // Clear existing scales
+  const scalesContainer = document.querySelector('.scales-container');
   scalesContainer.innerHTML = "";
   window.allColorScales = [];
   
-  // Hide color editor if open
-  hideColorEditor();
-  
-  // Use current configurations (might be from URL)
-  const currentConfigs = window.allColorScales.length > 0 
-    ? window.allColorScales.map(s => s.config)
-    : colorConfigs;
-  
   // Regenerate all color rows
-  currentConfigs.forEach((cfg, index) => {
+  colorConfigs.forEach((cfg, index) => {
     const row = createScaleRow({...cfg, stepsCount: currentStepsCount}, index);
     scalesContainer.appendChild(row);
   });
 
   // Generate the global-colors.css file
   generateGlobalColorsCss();
-  
-  // Update URL state
-  updateURLState();
 
   // Redraw the curves to reflect any changes in curve settings
   drawEasingCurves();
@@ -757,11 +383,14 @@ function updateStepsCount(newCount) {
   regenerateScales();
 }
 
-// Force redraw of curves
-function redrawCurves() {
-  console.log('Redrawing curves with settings:', curveSettings);
-  drawEasingCurves();
-}
+// Initialize everything
+const scalesContainer = document.querySelector('.scales-container');
+
+// Initialize with default configs
+colorConfigs.forEach((cfg, index) => {
+  const row = createScaleRow(cfg, index);
+  scalesContainer.appendChild(row);
+});
 
 // Generate initial color scales and draw curves
 regenerateScales();
@@ -786,8 +415,7 @@ function formatScaleData() {
     scaleData[colorName] = {};
     
     // Get all step numbers from the scale labels
-    const steps = Array.from(document.querySelectorAll('.scale-label'))
-      .map(label => label.textContent);
+    const steps = getStepsForCurrentCount();
     
     // Map hex values to their steps
     scale.hexValues.forEach((hex, index) => {
