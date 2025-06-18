@@ -1,6 +1,6 @@
 // app.js
 import Color from "https://colorjs.io/dist/color.js";
-import { generatePerceptuallyUniformScale, ease, curveSettings } from "./scale.js";
+import { generatePerceptuallyUniformScale, ease } from "./scale.js";
 import { defaults, colorConfigs, stepsCount } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";
 
@@ -10,8 +10,7 @@ document.documentElement.style.setProperty("--swatch-count", stepsCount);
 // Global storage for all generated color scales
 window.allColorScales = [];
 
-// Theme and step count management - declare early
-let currentStepsCount = 13;
+// Theme management
 let currentTheme = 'slate';
 
 window.useOklab = false;
@@ -21,31 +20,9 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// Get steps for current count
+// Always use 13 steps: 50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 850, 900, 950
 function getStepsForCurrentCount() {
-  const count = currentStepsCount;
-  const baseLeft  = [50, 100, 200, 300, 400];
-  const baseRight = [600, 700, 800, 900, 950];
-  const midLeft   = [150, 250, 350, 450];
-  const midRight  = [550, 650, 750, 850];
-  const extraTotal   = count - 11;
-  const extrasPerSide = extraTotal / 2;
-
-  // Build left (tints)
-  const leftStops = baseLeft.slice();
-  for (let i = 0; i < extrasPerSide; i++) {
-    leftStops.push(midLeft[i]);
-  }
-  leftStops.sort((a,b)=>a-b);
-
-  // Build right (shades)
-  const rightStops = baseRight.slice();
-  for (let i = 0; i < extrasPerSide; i++) {
-    rightStops.push(midRight[midRight.length - 1 - i]);
-  }
-  rightStops.sort((a,b)=>a-b);
-
-  return [...leftStops, 500, ...rightStops];
+  return [50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 850, 900, 950];
 }
 
 function getStepNameForIndex(colorName, stepIndex) {
@@ -65,11 +42,9 @@ function createScaleRow({
   endHueShift,
   startL: cfgStartL,
   endL:   cfgEndL,
-  stepsCount: configStepsCount,
   ...overrides
 }, rowIndex) {
-  // Use provided stepsCount or fall back to current global value
-  const actualStepsCount = configStepsCount || currentStepsCount || stepsCount;
+  // Always use 13 steps
   // Convert baseHex → OKLCH coords:
   const [L01, C04, Hdeg] = new Color(baseHex).to("oklch").coords;
   const baseL = L01 * 100;   // Convert from 0-1 to 0-100 range
@@ -82,18 +57,15 @@ function createScaleRow({
     baseC,
     baseH,
     startL:      cfgStartL  ?? defaults.startL,
-    startHueShift,
     endL:        cfgEndL    ?? defaults.endL,
+    startS:      overrides.startS      ?? defaults.startS,
+    endS:        overrides.endS        ?? defaults.endS,
+    startHueShift,
     endHueShift,
-    stepsCount: actualStepsCount,
-    // OKhsl saturation parameters from defaults and overrides
-    tintStartS:  overrides.tintStartS  ?? defaults.tintStartS,
-    tintEndS:    overrides.tintEndS    ?? defaults.tintEndS,
-    shadeStartS: overrides.shadeStartS ?? defaults.shadeStartS,
-    shadeEndS:   overrides.shadeEndS   ?? defaults.shadeEndS,
-    // Rate parameters from defaults and overrides
-    tintLRate:   overrides.tintLRate   ?? defaults.tintLRate,
-    shadeLRate:  overrides.shadeLRate  ?? defaults.shadeLRate,
+    // Curve overrides (use defaults if not specified)
+    lightnessCurve:  overrides.lightnessCurve  ?? defaults.lightnessCurve,
+    saturationCurve: overrides.saturationCurve ?? defaults.saturationCurve,
+    hueCurve:        overrides.hueCurve        ?? defaults.hueCurve,
   };
 
   const fullScaleLCH = generatePerceptuallyUniformScale(options);
@@ -200,28 +172,7 @@ function toggleDarkMode() {
 // Initialize dark mode
 initDarkMode();
 
-// Handle tab switching
-function initTabSwitcher() {
-  const tabButtons = document.querySelectorAll('.tab-button');
-  
-  tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const newStepsCount = parseInt(button.dataset.steps);
-      if (newStepsCount === currentStepsCount) return;
-      
-      // Update active state
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      
-      // Update steps count
-      currentStepsCount = newStepsCount;
-      
-      // Regenerate everything
-      regenerateScales();
-      drawEasingCurves();
-    });
-  });
-}
+// Tab switching removed - always use 13 steps
 
 // Function to generate CSS content for all color scales
 function generateGlobalColorsCss() {
@@ -231,30 +182,7 @@ function generateGlobalColorsCss() {
     const baseName = scale.name.split('-')[0]; // Get color name without the -500
     
     scale.hexValues.forEach((hex, index) => {
-      // Get the level number for this index using the same logic as createScaleLabels
-      const count = currentStepsCount;
-      const baseLeft  = [50, 100, 200, 300, 400];
-      const baseRight = [600, 700, 800, 900, 950];
-      const midLeft   = [150, 250, 350, 450];
-      const midRight  = [550, 650, 750, 850];
-      const extraTotal   = count - 11;
-      const extrasPerSide = extraTotal / 2;
-
-      // Build left (tints)
-      const leftStops = baseLeft.slice();
-      for (let i = 0; i < extrasPerSide; i++) {
-        leftStops.push(midLeft[i]);
-      }
-      leftStops.sort((a,b)=>a-b);
-
-      // Build right (shades)
-      const rightStops = baseRight.slice();
-      for (let i = 0; i < extrasPerSide; i++) {
-        rightStops.push(midRight[midRight.length - 1 - i]);
-      }
-      rightStops.sort((a,b)=>a-b);
-
-      const steps = [...leftStops, 500, ...rightStops];
+      const steps = getStepsForCurrentCount();
       const currentLevel = steps[index];
       
       // Update CSS variable directly
@@ -268,96 +196,9 @@ function generateGlobalColorsCss() {
   
 }
 
-function drawCurve(svgId, curves) {
-  const svg = document.getElementById(svgId);
-  if (!svg) {
-    console.error(`SVG element with id ${svgId} not found`);
-    return;
-  }
+// Curve drawing functions removed - no longer needed
 
-  // Clear existing content
-  svg.innerHTML = '';
-
-  // Add grid lines
-  for (let i = 0; i <= 4; i++) {
-    const x = Math.round((i / 4) * 280 + 10);
-    const y = Math.round((i / 4) * 180 + 10);
-
-    // Vertical grid lines
-    const vLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    vLine.setAttribute("x1", x);
-    vLine.setAttribute("y1", 10);
-    vLine.setAttribute("x2", x);
-    vLine.setAttribute("y2", 190);
-    vLine.setAttribute("stroke", "var(--border-norm)");
-    vLine.setAttribute("stroke-width", "1");
-    vLine.setAttribute("shape-rendering", "crispEdges");
-    svg.appendChild(vLine);
-
-    // Horizontal grid lines
-    const hLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    hLine.setAttribute("x1", 10);
-    hLine.setAttribute("y1", y);
-    hLine.setAttribute("x2", 290);
-    hLine.setAttribute("y2", y);
-    hLine.setAttribute("stroke", "var(--border-norm)");
-    hLine.setAttribute("stroke-width", "1");
-    hLine.setAttribute("shape-rendering", "crispEdges");
-    svg.appendChild(hLine);
-  }
-  
-  // Draw each curve
-  curves.forEach(curve => {
-    const points = [];
-    const steps = 100;
-    
-    for (let i = 0; i <= steps; i++) {
-      const t = i / steps;
-      // Use the imported ease function to match the actual implementation
-      let easedValue = ease(t, curve.easing);
-      
-      const x = 10 + t * 280;
-      const y = 190 - easedValue * 180; // Flip Y axis
-      points.push(`${x},${y}`);
-    }
-    
-    const pathData = `M${points.join(' L')}`;
-    
-    // Create path element
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", pathData);
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", curve.color);
-    path.setAttribute("stroke-width", "2");
-    path.setAttribute("opacity", "0.9");
-    path.setAttribute("shape-rendering", "geometricPrecision");
-    
-    // Append path to SVG
-    svg.appendChild(path);
-  });
-}
-
-// Draw separate curves for tints and shades sections
-function drawEasingCurves() {
-  // Curves for the tint section (50 → 500)
-  const tintCurves = [
-    { name: 'Tint L', easing: curveSettings.tintLightness, color: '#EE3A59' },  // Tint Lightness - red
-    { name: 'Tint S', easing: curveSettings.tintSaturation, color: '#3d88fd' },  // Tint Saturation - blue
-    { name: 'H', easing: curveSettings.hue, color: '#14b8a6' }  // Hue - teal
-  ];
-  
-  // Curves for the shade section (500 → 950)
-  const shadeCurves = [
-    { name: 'Shade L', easing: curveSettings.shadeLightness, color: '#FF6B8A' },  // Shade Lightness - light red
-    { name: 'Shade S', easing: curveSettings.shadeSaturation, color: '#87CEEB' },  // Shade Saturation - light blue
-    { name: 'H', easing: curveSettings.hue, color: '#14b8a6' }  // Hue - teal
-  ];
-  
-  drawCurve('tint-curve', tintCurves);
-  drawCurve('shade-curve', shadeCurves);
-}
-
-// Update regenerateScales to include curve drawing
+// Regenerate all color scales
 function regenerateScales() {
   // Clear existing scales
   const scalesContainer = document.querySelector('.scales-container');
@@ -366,22 +207,15 @@ function regenerateScales() {
   
   // Regenerate all color rows
   colorConfigs.forEach((cfg, index) => {
-    const row = createScaleRow({...cfg, stepsCount: currentStepsCount}, index);
+    const row = createScaleRow(cfg, index);
     scalesContainer.appendChild(row);
   });
 
   // Generate the global-colors.css file
   generateGlobalColorsCss();
-
-  // Redraw the curves to reflect any changes in curve settings
-  drawEasingCurves();
 }
 
-// Update the steps count and regenerate
-function updateStepsCount(newCount) {
-  currentStepsCount = newCount;
-  regenerateScales();
-}
+// Steps count is fixed at 13 - no updating needed
 
 // Initialize everything
 const scalesContainer = document.querySelector('.scales-container');
@@ -392,20 +226,10 @@ colorConfigs.forEach((cfg, index) => {
   scalesContainer.appendChild(row);
 });
 
-// Generate initial color scales and draw curves
+// Generate initial color scales
 regenerateScales();
 
-// Initialize tab switcher
-initTabSwitcher();
-
-// Set initial tab state based on current stepsCount
-document.querySelectorAll('.tab-button').forEach(btn => {
-  if (parseInt(btn.dataset.steps) === currentStepsCount) {
-    btn.classList.add('active');
-  } else {
-    btn.classList.remove('active');
-  }
-});
+// Always use 13 steps - no tab switching needed
 
 // Format the entire scale data for copying
 function formatScaleData() {

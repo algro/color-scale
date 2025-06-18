@@ -27,54 +27,8 @@
     <div class="content-wrapper">
       <div class="controls-row">
         <button id="copy-scale-button" class="copy-scale-button">Copy scale</button>
-        <div class="tab-switcher">
-          <button class="tab-button" data-steps="11">11</button>
-          <button class="tab-button active" data-steps="13">13</button>
-        </div>
       </div>
-      <div class="curve-container">
-        <div class="curve-header">
-          <h3>Easing Curves</h3>
-        </div>
-        <div class="curves-row">
-          <div class="curve-section">
-            <h4>Tints (50 → 500)</h4>
-            <svg id="tint-curve" width="300" height="200" viewBox="0 0 300 200"></svg>
-            <div class="curve-legend">
-              <div class="legend-item">
-                <div class="legend-dot" style="background-color: #EE3A59;"></div>
-                <span class="legend-label">Lightness</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-dot" style="background-color: #3d88fd;"></div>
-                <span class="legend-label">Saturation</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-dot" style="background-color: #14b8a6;"></div>
-                <span class="legend-label">Hue shift</span>
-              </div>
-            </div>
-          </div>
-          <div class="curve-section">
-            <h4>Shades (500 → 950)</h4>
-            <svg id="shade-curve" width="300" height="200" viewBox="0 0 300 200"></svg>
-            <div class="curve-legend">
-              <div class="legend-item">
-                <div class="legend-dot" style="background-color: #FF6B8A;"></div>
-                <span class="legend-label">Lightness</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-dot" style="background-color: #87CEEB;"></div>
-                <span class="legend-label">Saturation</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-dot" style="background-color: #14b8a6;"></div>
-                <span class="legend-label">Hue shift</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
       <div class="documentation">
         <p class="reference">The OKHSL color space implementation is based on <a href="https://bottosson.github.io/posts/colorpicker/#okhsl" target="_blank" rel="noopener noreferrer">Björn Ottosson's research on perceptual color spaces</a>, which provides the mathematical foundation for achieving perceptually uniform saturation across different hues.
           Color space conversions and utilities powered by <a href="https://colorjs.io/" target="_blank" rel="noopener noreferrer">Color.js</a>

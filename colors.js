@@ -8,81 +8,70 @@ export const stepsCount = 13;
 
 
 export const defaults = {
-  // Lightness at step 50 (0…100)
-  startL:   98,  
-  // Lightness at step 950 (0…100)
-  endL:     19,  
-  // Tint saturation progression (0-1) - from step 50 to base-500
-  tintStartS: 0.1,    // Saturation at tint-50 (lightest)
-  tintEndS:   0.95,    // Saturation approaching base-500 (without affecting base-500)
-  
-  // Shade saturation progression (0-1) - from base-500 to step 950  
-  shadeStartS: 0.85,   // Saturation starting from base-500 (without affecting base-500)
-  shadeEndS:   0.25,   // Saturation at shade-950 (darkest)    
+  // Lightness at step 50 and 950 (0…100)
+  startL: 98,  
+  endL:   19,  
+  // Saturation at step 50 and 950 (0-1)
+  startS: 0.1,   // Saturation at step 50 (lightest)
+  endS:   0.25,  // Saturation at step 950 (darkest)
 
-  // Rate of progression for tints and shades
-  tintLRate: 0.99,    // Tint lightness rate: progression from startL to (tintLRate × base-500 lightness). Must be ≥ 1.0
-  shadeLRate: 0.97,   // Shade lightness rate: progression from (shadeLRate × base-500 lightness) to endL. Must be ≤ 1.0
+  // Default piecewise curves - can be overridden per color
+  // Syntax: ["easingType:rate", step, "easingType:rate", step, ...]
+  // Rate is optional (defaults to 1.0), allows partial progression that cascades
+  lightnessCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.78",850,"linear:0.22"],
+  saturationCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.78",850,"linear:0.22"],
+  hueCurve: ["linear", 500, "linear"],
 
   // Note: Uses OKhsl color space for perceptually uniform saturation across all hues.
-  // Bezier curves control lightness and hue progression for smooth transitions.
+  // Piecewise curves control lightness, saturation, and hue progression for maximum flexibility.
 };
 
 // 3) Export your array of colorConfigs. Any per-color override for L/C
 //    must follow the same ranges: L in 0..100, C in 0..0.4.
 export const colorConfigs = [
   {
-    name: "red-500",
+    name: "red-500", 
     baseHex: "#F23441",
     startHueShift: -8.0,
-    endHueShift:    -5,
-    shadeStartS: 0.95
+    endHueShift: -5,
+    // Example: Custom saturation curve for red with rates
+    // saturationCurve: ["easeOutQuad:0.4", 300, "linear:0.3", 500, "linear", 700, "easeInCubic:0.5"]
   },
   {
     name: "orange-500",
     baseHex: "#f67b29",
     startHueShift: 26,
-    endHueShift:   -8,
-    shadeStartS: 0.98
+    endHueShift:   -8
   },
   {
     name: "amber-500",
     baseHex: "#F5A314",
     startHueShift: 20,
-    endHueShift:   -25,
-    shadeStartS: 0.98
-    
+    endHueShift:   -25
   },
   {
     name: "yellow-500",
     baseHex: "#FAB905",
     startHueShift: 15,
-    endHueShift:   -32,
-    shadeStartS: 0.95
-    
+    endHueShift:   -32
   },
   {
     name: "olive-500",
     baseHex: "#C5C020",
     startHueShift: 0,
-    endHueShift:   -5,
-    shadeStartS: 0.85,
-    tintEndS:   0.85
-    
+    endHueShift:   -5
   },
   {
     name: "lime-500",
     baseHex: "#9BC61C",
     startHueShift: -10,
     endHueShift:    5
-    
   },
   {
     name: "green-500",
     baseHex: "#01C15B",
     startHueShift: -10,
     endHueShift:    12
-    
   },
   {
     name: "emerald-500",
@@ -101,14 +90,12 @@ export const colorConfigs = [
     baseHex: "#00B8DB",
     startHueShift: -5,
     endHueShift:   -2
-    
   },
   {
     name: "sky-500",
     baseHex: "#00A6F4",
     startHueShift:  -5,
-    endHueShift:    0,
-    
+    endHueShift:    0
   },
   {
     name: "blue-500",
@@ -156,48 +143,47 @@ export const colorConfigs = [
     name: "rose-500",
     baseHex: "#EE3A59",
     startHueShift:  -4.0,
-    endHueShift:    -12,
-    shadeStartS: 0.85
+    endHueShift:    -12
   },
   {
     name: "sand-500",
     baseHex: "#99615C",
     startHueShift: 10.0,
     endHueShift: -20.0,
-    tintStartS: 0.02,   // Low saturation at tint-50
-    tintEndS: 0.3,     // Moderate saturation approaching base-500
-    shadeStartS: 0.4,  // Moderate saturation starting from base-500
-    shadeEndS: 0.04     // Low saturation at shade-950
+    startS: 0.02,  // Low saturation at step 50
+    endS: 0.04     // Low saturation at step 950
   },
   {
     name: "slate-500",
-    baseHex: "#636F88",
+    baseHex: "#617085",
     startHueShift: -8.0,
     endHueShift: 8.0,
-    tintStartS: 0.02,   // Low saturation at tint-50
-    tintEndS: 0.22,     // Moderate saturation approaching base-500
-    shadeStartS: 0.22,  // Higher saturation starting from base-500
-    shadeEndS: 0.04     // Maintain higher saturation at shade-950
+    startS: 0.02,  // Low saturation at step 50
+    endS: 0.04     // Low saturation at step 950
   },
   {
     name: "grey-500",
-    baseHex: "#68686E",
+    baseHex: "#636A79",
+    startHueShift: -10,
+    endHueShift: -5,
+    startS: 0.02,  // Very low saturation at step 50
+    endS: 0.02     // Very low saturation at step 950
+  },
+  {
+    name: "zinc-500",
+    baseHex: "#67676F",
     startHueShift: 0.0,
     endHueShift: 0.0,
-    tintStartS: 0.02,  // Very low saturation at tint-50
-    tintEndS: 0.022,    // Still very low saturation approaching base-500
-    shadeStartS: 0.045,  // Low saturation starting from base-500
-    shadeEndS: 0.02     // Higher saturation at shade-950
+    startS: 0.02,  // Very low saturation at step 50
+    endS: 0.02     // Very low saturation at step 950
   },
   {
     name: "neutral-500",
     baseHex: "#686868",
     startHueShift: 0.0,
     endHueShift: 0.0,
-    tintStartS: 0.0,   // No saturation (pure grayscale)
-    tintEndS: 0.0,     // No saturation (pure grayscale)
-    shadeStartS: 0.0,  // No saturation (pure grayscale)
-    shadeEndS: 0.0     // No saturation (pure grayscale)
+    startS: 0.0,  // No saturation (pure grayscale)
+    endS: 0.0     // No saturation (pure grayscale)
   }
 ];
 

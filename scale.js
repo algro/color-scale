@@ -3,114 +3,249 @@ import Color from "https://colorjs.io/dist/color.js";
 import { oklchToHex } from "./colors-utilities.js";
 import { oklchToOKhsl, okhslToOKLCH } from "./okhsl.js";
 
-// Export curve settings for use in other modules
-export const curveSettings = {
-  tintLightness: "customTintCurve",
-  shadeLightness: "customShadeCurve", 
-  tintSaturation: "customTintCurve",
-  shadeSaturation: "customShadeCurve",
-  hue: "linear"
+// Export default curve settings for use in other modules
+export const defaultCurves = {
+  lightnessCurve: ["linear", 200, "easeInQuad", 400, "linear", 500, "linear", 600, "easeInCubic", 800, "linear"],
+  saturationCurve: ["linear", 500, "linear"],
+  hueCurve: ["linear", 500, "linear"]
 };
 
 /**
- * Easing function that takes a string name and returns the appropriate curve
- * @param {number} t - progress value from 0 to 1
- * @param {string} easingType - one of: "linear", "bezierTint-11", "bezierTint-13", "bezierShade-11", "bezierShade-13"
- * @returns {number} - eased value from 0 to 1
+ * Complete set of standard easing functions
  */
-// Standard easing functions - faster and more predictable than Bézier curves
 function easeLinear(t) {
   return t;
+}
+
+// Sine
+function easeInSine(t) {
+  return 1 - Math.cos((t * Math.PI) / 2);
+}
+
+function easeOutSine(t) {
+  return Math.sin((t * Math.PI) / 2);
 }
 
 function easeInOutSine(t) {
   return -(Math.cos(Math.PI * t) - 1) / 2;
 }
 
+// Quad
+function easeInQuad(t) {
+  return t * t;
+}
+
+function easeOutQuad(t) {
+  return 1 - (1 - t) * (1 - t);
+}
+
 function easeInOutQuad(t) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+}
+
+// Cubic
+function easeInCubic(t) {
+  return t * t * t;
+}
+
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
 }
 
 function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
+// Quart
+function easeInQuart(t) {
+  return t * t * t * t;
+}
+
+function easeOutQuart(t) {
+  return 1 - Math.pow(1 - t, 4);
+}
+
 function easeInOutQuart(t) {
   return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+}
+
+// Quint
+function easeInQuint(t) {
+  return t * t * t * t * t;
+}
+
+function easeOutQuint(t) {
+  return 1 - Math.pow(1 - t, 5);
 }
 
 function easeInOutQuint(t) {
   return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
 }
 
-
-
-// Cubic bezier implementation - matches CSS cubic-bezier() exactly
-function cubicBezier(t, x1, y1, x2, y2) {
-  // For cubic bezier curve with control points (x1,y1) and (x2,y2)
-  // Start point is (0,0), end point is (1,1)
-  
-  // Use binary search to find the correct t value for given x
-  function bezierX(t) {
-    return 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
-  }
-  
-  function bezierY(t) {
-    return 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
-  }
-  
-  // Binary search to find t that gives us the input x
-  let start = 0, end = 1, mid;
-  const precision = 0.0001;
-  
-  for (let i = 0; i < 20; i++) {
-    mid = (start + end) / 2;
-    const x = bezierX(mid);
-    
-    if (Math.abs(x - t) < precision) break;
-    
-    if (x < t) {
-      start = mid;
-    } else {
-      end = mid;
-    }
-  }
-  
-  return bezierY(mid);
+// Expo
+function easeInExpo(t) {
+  return t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
 }
 
-export function ease(t, easingType = "easeInOutSine") {
+function easeOutExpo(t) {
+  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+}
+
+function easeInOutExpo(t) {
+  if (t === 0) return 0;
+  if (t === 1) return 1;
+  return t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
+}
+
+export function ease(t, easingType = "linear") {
   switch (easingType) {
-    case "linear":
-      return easeLinear(t);
-    
-    case "easeInOutSine":
-      return easeInOutSine(t);
-    
-    case "easeInOutQuad":
-      return easeInOutQuad(t);
-    
-    case "easeInOutCubic":
-      return easeInOutCubic(t);
-    
-    case "easeInOutQuart":
-      return easeInOutQuart(t);
-    
-    case "easeInOutQuint":
-      return easeInOutQuint(t);
-    
-    case "customTintCurve":
-      // Custom curve for tints - gentle start, strong acceleration at end
-      return cubicBezier(t, 0.8, 0.17, 0.6, 0.90);
-    
-    case "customShadeCurve":
-      // Custom curve for shades - mirrored tint curve (strong start, gentle end)
-      // Direct control points for opposite behavior to tint curve
-      return cubicBezier(t, 0.4, 0.01, 0.4, 0.5);
-    
+    case "linear": return easeLinear(t);
+    case "easeInSine": return easeInSine(t);
+    case "easeOutSine": return easeOutSine(t);
+    case "easeInOutSine": return easeInOutSine(t);
+    case "easeInQuad": return easeInQuad(t);
+    case "easeOutQuad": return easeOutQuad(t);
+    case "easeInOutQuad": return easeInOutQuad(t);
+    case "easeInCubic": return easeInCubic(t);
+    case "easeOutCubic": return easeOutCubic(t);
+    case "easeInOutCubic": return easeInOutCubic(t);
+    case "easeInQuart": return easeInQuart(t);
+    case "easeOutQuart": return easeOutQuart(t);
+    case "easeInOutQuart": return easeInOutQuart(t);
+    case "easeInQuint": return easeInQuint(t);
+    case "easeOutQuint": return easeOutQuint(t);
+    case "easeInOutQuint": return easeInOutQuint(t);
+    case "easeInExpo": return easeInExpo(t);
+    case "easeOutExpo": return easeOutExpo(t);
+    case "easeInOutExpo": return easeInOutExpo(t);
     default:
       console.warn(`Unknown easing type: ${easingType}, falling back to linear`);
       return easeLinear(t);
+  }
+}
+
+/**
+ * Parse curve definition and return segment information with rates
+ * @param {Array} curveDefinition - Array like ["linear:0.5", 200, "easeInQuad:0.3", 400, "linear", 500]
+ * @returns {Array} Array of segments with {easingType, rate, endStep}
+ */
+function parseCurveDefinition(curveDefinition) {
+  const segments = [];
+  let currentStep = 50; // Always start at step 50
+  
+  for (let i = 0; i < curveDefinition.length; i += 2) {
+    const easingSpec = curveDefinition[i];
+    const endStep = curveDefinition[i + 1] || 950; // Default to 950 if last segment
+    
+    // Parse easing type and rate (e.g., "linear:0.5" -> {type: "linear", rate: 0.5})
+    let easingType, rate;
+    if (easingSpec.includes(':')) {
+      [easingType, rate] = easingSpec.split(':');
+      rate = parseFloat(rate);
+    } else {
+      easingType = easingSpec;
+      rate = 1.0; // Default to full rate
+    }
+    
+    segments.push({
+      startStep: currentStep,
+      endStep: endStep,
+      easingType: easingType,
+      rate: rate
+    });
+    
+    currentStep = endStep;
+  }
+  
+  return segments;
+}
+
+/**
+ * Evaluate a piecewise curve with cascading progression and adjustable rates
+ * @param {number} step - The step number (50, 100, 200, etc.)
+ * @param {Array} curveDefinition - The curve definition array with rates
+ * @param {number} startValue - Value at step 50
+ * @param {number} baseValue - Value at step 500 (base)
+ * @param {number} endValue - Value at step 950
+ * @returns {number} The interpolated value at the given step
+ */
+function evaluatePiecewiseCurve(step, curveDefinition, startValue, baseValue, endValue) {
+  const allSteps = [50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 850, 900, 950];
+  const stepIndex = allSteps.indexOf(step);
+  if (stepIndex === -1) {
+    console.warn(`Step ${step} not found in steps array`);
+    return baseValue;
+  }
+  
+  const baseIndex = allSteps.indexOf(500); // Index 6
+  
+  // Return base value for step 500
+  if (stepIndex === baseIndex) {
+    return baseValue;
+  }
+  
+  // Parse segments with rates
+  const segments = parseCurveDefinition(curveDefinition).map(seg => ({
+    ...seg,
+    startIndex: allSteps.indexOf(seg.startStep),
+    endIndex: allSteps.indexOf(seg.endStep)
+  }));
+  
+  const isInTints = stepIndex < baseIndex;
+  
+  if (isInTints) {
+    // TINTS: Only consider segments that affect the tint range (50→500)
+    const tintSegments = segments.filter(seg => seg.endIndex <= baseIndex);
+    
+    let currentValue = 0;
+    for (const segment of tintSegments) {
+      if (stepIndex < segment.startIndex) break;
+      
+      let segmentCompletion;
+      if (stepIndex >= segment.endIndex) {
+        segmentCompletion = 1.0;
+      } else {
+        segmentCompletion = (stepIndex - segment.startIndex) / (segment.endIndex - segment.startIndex);
+      }
+      
+      const easedCompletion = ease(segmentCompletion, segment.easingType);
+      currentValue += segment.rate * easedCompletion;
+      
+      if (stepIndex <= segment.endIndex) break;
+    }
+    
+    const progressRatio = Math.min(currentValue, 1.0);
+    return startValue + (baseValue - startValue) * progressRatio;
+    
+  } else {
+    // SHADES: Only consider segments that affect the shade range (500→950)
+    const shadeSegments = segments.filter(seg => seg.startIndex >= baseIndex);
+    
+    // If no shade segments defined, fall back to linear progression
+    if (shadeSegments.length === 0) {
+      const t = (stepIndex - baseIndex) / (allSteps.length - 1 - baseIndex);
+      return baseValue + (endValue - baseValue) * t;
+    }
+    
+    let currentValue = 0;
+    for (const segment of shadeSegments) {
+      if (stepIndex < segment.startIndex) break;
+      
+      let segmentCompletion;
+      if (stepIndex >= segment.endIndex) {
+        segmentCompletion = 1.0;
+      } else {
+        segmentCompletion = (stepIndex - segment.startIndex) / (segment.endIndex - segment.startIndex);
+      }
+      
+      const easedCompletion = ease(segmentCompletion, segment.easingType);
+      currentValue += segment.rate * easedCompletion;
+      
+      if (stepIndex <= segment.endIndex) break;
+    }
+    
+    const progressRatio = Math.min(currentValue, 1.0);
+    return baseValue + (endValue - baseValue) * progressRatio;
   }
 }
 
@@ -118,169 +253,82 @@ function wrapHue(h) {
   return ((h % 360) + 360) % 360;
 }
 
-
+// Old generateTintShadeScale function removed - replaced by generatePerceptuallyUniformScale with piecewise curves
 
 /**
- * generateTintShadeScale(options):
- *
- *   - baseL, baseC, baseH:       The "500" color in (L ∈ 0..100, C ∈ 0..0.4, H ∈ deg).
- *   - startL, startHueShift:    The (L,H-shift) for step 50.
- *   - endL, endHueShift:        The (L,H-shift) for step 950.
- *   - stepsCount:               Must be 11 or 13 steps only.
- *   - tintStartS, tintEndS:     OKhsl saturation range (0-1) for tints (50 → 500).
- *   - shadeStartS, shadeEndS:   OKhsl saturation range (0-1) for shades (500 → 950).
- *
- * Uses OKhsl color space for perceptually uniform saturation across all hues.
- * Bezier curves control lightness, hue, and saturation progression.
- * Saturation uses a harmonic curve with equal acceleration/deceleration for smooth transitions.
- *
- * Returns an array of length stepsCount of objects {L, C, H}, each guaranteed
- * to lie within the sRGB gamut through OKhsl's built-in gamut mapping.
+ * generatePerceptuallyUniformScale using OKhsl with piecewise curves
+ * Uses OKhsl color space to ensure perceptually uniform saturation across different hues
+ * 
+ * @param {Object} options - Configuration object
+ * @param {number} options.baseL - Base lightness (OKLCH L, 0-100)
+ * @param {number} options.baseC - Base chroma (OKLCH C, 0-0.4ish)
+ * @param {number} options.baseH - Base hue (OKLCH H, 0-360)
+ * @param {number} options.startL - Lightness at step 50
+ * @param {number} options.endL - Lightness at step 950
+ * @param {number} options.startS - Saturation at step 50 (0-1)
+ * @param {number} options.endS - Saturation at step 950 (0-1)
+ * @param {number} options.startHueShift - Hue shift at step 50 (degrees)
+ * @param {number} options.endHueShift - Hue shift at step 950 (degrees)
+ * @param {Array} [options.lightnessCurve] - Piecewise curve for lightness progression
+ * @param {Array} [options.saturationCurve] - Piecewise curve for saturation progression
+ * @param {Array} [options.hueCurve] - Piecewise curve for hue progression
+ * @returns {Array} Array of 13 color objects {L, C, H}
  */
-export function generateTintShadeScale({
+export function generatePerceptuallyUniformScale({
   baseL,
   baseC,
   baseH,
   startL,
   endL,
+  startS,
+  endS,
   startHueShift,
   endHueShift,
-  stepsCount,
-  tintStartS,
-  tintEndS,
-  shadeStartS,
-  shadeEndS,
-  tintLRate = 1.0,
-  shadeLRate = 1.0
+  lightnessCurve = defaultCurves.lightnessCurve,
+  saturationCurve = defaultCurves.saturationCurve,
+  hueCurve = defaultCurves.hueCurve
 }) {
-  // Calculate the number of steps for tints and shades
-  const totalSteps = stepsCount;
-  const midPoint = Math.floor(totalSteps / 2);
-  const tintSteps = midPoint;
-  const shadeSteps = totalSteps - midPoint - 1; // -1 for the base color
-
-  // Calculate the lightness ranges
-  const tintLightnessRange = (baseL - startL) * tintLRate; // How far from startL towards baseL
-  const shadeLightnessRange = (endL - baseL) * shadeLRate; // How far from baseL towards endL
-
-  // Generate the scale
-  const scale = [];
-  
-  // Generate tints (50 to 400)
-  for (let i = 0; i < tintSteps; i++) {
-    const t = i / (tintSteps - 1);
-    const L = startL + (tintLightnessRange * t); // Progress from startL towards baseL
-    const S = tintStartS + (tintEndS - tintStartS) * t;
-    const H = baseH + (startHueShift * t);
-    scale.push([L, S, H]);
-  }
-  
-  // Add base color (500)
-  scale.push([baseL, baseC, baseH]);
-  
-  // Generate shades (600 to 950)
-  for (let i = 0; i < shadeSteps; i++) {
-    const t = (i + 1) / shadeSteps;
-    const L = baseL + (shadeLightnessRange * t); // Progress from baseL towards endL
-    const S = shadeStartS + (shadeEndS - shadeStartS) * t;
-    const H = baseH + (endHueShift * t);
-    scale.push([L, S, H]);
-  }
-  
-  return scale;
-}
-
-/**
- * generatePerceptuallyUniformScale using OKhsl
- * Uses OKhsl color space to ensure perceptually uniform saturation across different hues
- */
-export function generatePerceptuallyUniformScale({
-  baseL, baseC, baseH,
-  startL, startHueShift,
-  endL, endHueShift,
-  stepsCount,
-  tintStartS = 0.1,   // Saturation at tint-50
-  tintEndS = 0.5,     // Saturation approaching base-500
-  shadeStartS = 0.9,  // Saturation starting from base-500
-  shadeEndS = 0.2,    // Saturation at shade-950
-  tintLRate = 1.0,    // Rate for tint lightness progression (≥ 1.0)
-  shadeLRate = 1.0    // Rate for shade lightness progression (≤ 1.0)
-}) {
-  // Validate stepsCount - only allow 11 or 13
-  if (stepsCount !== 11 && stepsCount !== 13) {
-    throw new Error("stepsCount must be 11 or 13");
-  }
-  
-  // Validate rate constraints
-  if (tintLRate < 1.0) {
-    console.warn(`tintLRate (${tintLRate}) should be ≥ 1.0 to ensure tints remain lighter than base-500`);
-  }
-  if (shadeLRate > 1.0) {
-    console.warn(`shadeLRate (${shadeLRate}) should be ≤ 1.0 to ensure shades remain darker than base-500`);
-  }
-  
-  // Use curve settings from the exported configuration
-  const { tintLightness, shadeLightness, tintSaturation, shadeSaturation, hue } = curveSettings;
-
-  const N = stepsCount;
-  const mid = Math.floor(N / 2);
-  const H0 = wrapHue(baseH);
+  const steps = [50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 850, 900, 950];
+  const N = steps.length; // Always 13 steps
   const scale = new Array(N);
 
   // Convert base color to OKhsl to get reference saturation
-  const baseOKhsl = oklchToOKhsl(baseL, baseC, H0);
+  const baseOKhsl = oklchToOKhsl(baseL, baseC, baseH);
+  const baseSaturation = baseOKhsl.s;
 
-  // Calculate the effective target lightness for tints and shades
-  const tintTargetL = tintLRate * baseL;  // Where tints should progress to
-  const shadeStartL = shadeLRate * baseL; // Where shades should start from
-
-  // Generate tints (lighter colors)
-  for (let i = 0; i <= mid; i++) {
-    if (i === mid) {
-      scale[i] = { L: baseL, C: baseC, H: H0 };
+  // Generate each step
+  for (let i = 0; i < N; i++) {
+    const step = steps[i];
+    
+    if (step === 500) {
+      // Base color unchanged
+      scale[i] = { L: baseL, C: baseC, H: baseH };
       continue;
     }
-    const t = i / mid;
-    const eL = ease(t, tintLightness);  // Use tint-specific lightness curve
-    const eH = ease(t, hue);
-    const eS = ease(t, tintSaturation);
 
-    // Calculate lightness progression from startL to tintTargetL
-    const Li = startL + (tintTargetL - startL) * eL;
-    const Hi = H0 + startHueShift * (1 - eH);
-    
-    // Calculate saturation progression
-    const Si = tintStartS + (tintEndS - tintStartS) * eS;
-    
-    // Convert only saturation through OKhsl to get chroma, preserve our lightness
-    const tempOklch = okhslToOKLCH(Hi / 360, Si, baseOKhsl.l);  // Use base lightness for conversion
-    const Ci = tempOklch.C;  // Extract the chroma
-    
-    // Use our calculated lightness, OKhsl-derived chroma, and our calculated hue
-    scale[i] = { L: Li, C: Ci, H: wrapHue(Hi) };
-  }
+    // Evaluate curves at this step
+    const Li = evaluatePiecewiseCurve(step, lightnessCurve, startL, baseL, endL);
+    const Si = evaluatePiecewiseCurve(step, saturationCurve, startS, baseSaturation, endS);
+    const hueShift = evaluatePiecewiseCurve(step, hueCurve, startHueShift, 0, endHueShift);
+    const Hi = wrapHue(baseH + hueShift);
 
-  // Generate shades (darker colors)
-  for (let i = mid + 1; i < N; i++) {
-    const k = i - mid;
-    const t = k / (N - mid - 1); // Normalize to 0-1 range for shades
-    const eL = ease(t, shadeLightness);  // Use shade-specific lightness curve
-    const eH = ease(t, hue);
-    const eS = ease(t, shadeSaturation);
-    
-    // Calculate lightness progression from shadeStartL to endL
-    const Li = shadeStartL + (endL - shadeStartL) * eL;
-    const Hi = H0 + endHueShift * eH;
-    
-    // Calculate saturation progression
-    const Si = shadeStartS + (shadeEndS - shadeStartS) * eS;
-    
-    // Convert only saturation through OKhsl to get chroma, preserve our lightness
-    const tempOklch = okhslToOKLCH(Hi / 360, Si, baseOKhsl.l);  // Use base lightness for conversion
-    const Ci = tempOklch.C;  // Extract the chroma
-    
-    // Use our calculated lightness, OKhsl-derived chroma, and our calculated hue
-    scale[i] = { L: Li, C: Ci, H: wrapHue(Hi) };
+    // Handle zero saturation case (pure grayscale)
+    let Ci;
+    if (Si === 0 || isNaN(Si)) {
+      Ci = 0; // Zero chroma for grayscale
+    } else {
+      // Convert saturation through OKhsl to get chroma
+      const tempOklch = okhslToOKLCH(Hi / 360, Si, baseOKhsl.l);
+      Ci = tempOklch.C;
+      
+      // Fallback if OKhsl conversion produces NaN
+      if (isNaN(Ci)) {
+        Ci = 0;
+      }
+    }
+
+    // Use calculated lightness, OKhsl-derived chroma, and calculated hue
+    scale[i] = { L: Li, C: Ci, H: Hi };
   }
 
   return scale;
