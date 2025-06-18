@@ -127,6 +127,9 @@ function createScaleRow({
         : hex;
       await navigator.clipboard.writeText(toCopy);
       
+      // Show touch pill on touch devices
+      showTouchColorPill(hex);
+      
       // Show confirmation message
       tooltip.textContent = "Copied to clipboard!";
       setTimeout(() => {
@@ -263,3 +266,27 @@ document.getElementById('copy-scale-button').addEventListener('click', async () 
     button.textContent = originalText;
   }, 1000);
 });
+
+// Touch color pill functionality
+let touchPillTimeout;
+
+function showTouchColorPill(hexColor) {
+  const pill = document.getElementById('touch-color-pill');
+  if (!pill) return;
+  
+  // Update pill content
+  pill.textContent = hexColor;
+  
+  // Show pill
+  pill.classList.add('visible');
+  
+  // Clear existing timeout
+  if (touchPillTimeout) {
+    clearTimeout(touchPillTimeout);
+  }
+  
+  // Set new timeout to hide after 1.5 seconds
+  touchPillTimeout = setTimeout(() => {
+    pill.classList.remove('visible');
+  }, 1500);
+}
