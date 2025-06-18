@@ -77,6 +77,10 @@ body {
 .container {
   max-width: 100%;
   padding: var(--space-4);
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-8);
+  align-items: flex-start;
 }
 
 .scales-container {
@@ -84,6 +88,8 @@ body {
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-0);
+  flex: 1;
+  min-width: 0;
 }
 
 .scale-row {
@@ -364,13 +370,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 20px 0;
   width: 100%;
 }
 
 .copy-scale-button {
   padding: 12px 16px;
-  background: var(--background-weak);
+  background: var(--interactive-norm);
   border: none;
   border-radius: 8px;
   color: var(--text-norm);
@@ -381,7 +386,7 @@ body {
 }
 
 .copy-scale-button:hover {
-  background: var(--background-strong);
+  background: var(--interactive-hover);
 }
 
 .curve-legend {
@@ -412,8 +417,7 @@ body {
 /* Documentation section */
 .documentation {
   width: 100%;
-  margin-top: 80px;
-  padding-right: 80px;
+  margin-top: 24px;
   color: var(--text-norm);
   background: var(--background-norm);
   border-radius: 12px;
@@ -474,7 +478,7 @@ a:hover, a:visited:hover {
 }
 
 .content-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-4) 0;
+  max-width: 400px;
+  min-width: 300px;
+  flex-shrink: 0;
 }

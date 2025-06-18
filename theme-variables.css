@@ -17,10 +17,10 @@
   --border-strong: var(--slate-300);
 
   /* Interactive colors */
-  --interactive-norm: var(--iris-600);
-  --interactive-hover: var(--iris-700);
-  --interactive-active: var(--iris-800);
-  --interactive-disabled: var(--slate-300);
+  --interactive-norm: var(--slate-100);
+  --interactive-hover: var(--slate-150);
+  --interactive-active: var(--slate-200);
+  --interactive-disabled: var(--slate-50);
 }
 
 /* Dark Mode Theme */
@@ -42,8 +42,8 @@
   --border-strong: var(--slate-700);
 
   /* Interactive colors */
-  --interactive-norm: var(--blue-400);
-  --interactive-hover: var(--blue-300);
-  --interactive-active: var(--blue-200);
-  --interactive-disabled: var(--slate-700);
+  --interactive-norm: var(--slate-900);
+  --interactive-hover: var(--slate-850);
+  --interactive-active: var(--slate-800);
+  --interactive-disabled: var(--slate-950);
 } 
