@@ -1,47 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Color Scale Generator</title>
-  <link rel="stylesheet" href="theme-variables.css" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <!-- Touch color pill for mobile devices -->
-  <div id="touch-color-pill" class="touch-color-pill"></div>
-  
-  <!-- Dark mode toggle button -->
-  <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
-    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="5"/>
-      <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/>
-    </svg>
-    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>
-  </button>
-  
-  <!-- Main content -->
-  <div class="container">
-    <div class="scales-container">
-      <!-- Color columns will be inserted here -->
-    </div>
-    <div class="content-wrapper">
-      <div class="controls-row">
-        <button id="copy-scale-button" class="copy-scale-button">Copy scale</button>
-      </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Color Scale Generator</title>
+    <link rel="stylesheet" href="theme-variables.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Touch color pill for mobile devices -->
+    <div id="touch-color-pill" class="touch-color-pill"></div>
 
-      <div class="documentation">
-        <p class="reference">The OKHSL color space implementation is based on <a href="https://bottosson.github.io/posts/colorpicker/#okhsl" target="_blank" rel="noopener noreferrer">Björn Ottosson's research on perceptual color spaces</a>, which provides the mathematical foundation for achieving perceptually uniform saturation across different hues.
-          Color space conversions and utilities powered by <a href="https://colorjs.io/" target="_blank" rel="noopener noreferrer">Color.js</a>
-          OKLCH color space insights and visualization inspired by <a href="https://oklch.com/" target="_blank" rel="noopener noreferrer">OKLCH Color Picker & Converter</a> by Evil Martians.
-          Inspired by <a href="https://tailwindcss.com/docs/customizing-colors" target="_blank" rel="noopener noreferrer">Tailwind CSS's color system</a></p>
+    <!-- Dark mode toggle button -->
+    <button
+      id="dark-mode-toggle"
+      class="dark-mode-toggle"
+      aria-label="Toggle dark mode"
+    >
+      <svg
+        class="sun-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="12" cy="12" r="5" />
+        <path
+          d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"
+        />
+      </svg>
+      <svg
+        class="moon-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </svg>
+    </button>
+
+    <!-- Main content -->
+    <div class="container">
+      <div class="scales-container">
+        <!-- Color columns will be inserted here -->
+      </div>
+      <div class="content-wrapper">
+        <div class="controls-row">
+          <button id="copy-scale-button" class="copy-scale-button">
+            Copy scale
+          </button>
+        </div>
+
+        <div class="documentation">
+          <p class="reference">
+            The OKHSL color space implementation is based on
+            <a
+              href="https://bottosson.github.io/posts/colorpicker/#okhsl"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Björn Ottosson's research on perceptual color spaces</a
+            >, which provides the mathematical foundation for achieving
+            perceptually uniform saturation across different hues. Color space
+            conversions and utilities powered by
+            <a
+              href="https://colorjs.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Color.js</a
+            >
+            OKLCH color space insights and visualization inspired by
+            <a
+              href="https://oklch.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >OKLCH Color Picker & Converter</a
+            >
+            by Evil Martians. Inspired by
+            <a
+              href="https://tailwindcss.com/docs/customizing-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Tailwind CSS's color system</a
+            >
+          </p>
+          <p>
+            <a
+              href="https://github.com/algro/color-scale"
+              target="_blank"
+              rel="noopener noreferrer"
+              >https://github.com/algro/color-scale
+            </a>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Scripts -->
-  <script type="module" src="app.js"></script>
-</body>
+
+    <!-- Scripts -->
+    <script type="module" src="app.js"></script>
+  </body>
 </html>
