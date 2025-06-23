@@ -4,8 +4,7 @@ import { generatePerceptuallyUniformScale, ease } from "./scale.js";
 import { defaults, colorConfigs, stepsCount } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";
 
-/* 1) Put stepsCount into CSS var (if you need clamp() later) */
-document.documentElement.style.setProperty("--swatch-count", stepsCount);
+// Note: --swatch-count is now handled in generateGlobalColorsCss()
 
 // Global storage for all generated color scales
 window.allColorScales = [];
@@ -30,10 +29,7 @@ function getStepNameForIndex(colorName, stepIndex) {
   return `${colorName}-${steps[stepIndex]}`;
 }
 
-// Update swatch count CSS variable whenever it changes
-function updateSwatchCount(count) {
-  document.documentElement.style.setProperty("--swatch-count", count);
-}
+// Note: Swatch count is now handled in generateGlobalColorsCss()
 
 function createScaleRow({
   name,
@@ -179,8 +175,18 @@ initDarkMode();
 
 // Function to generate CSS content for all color scales
 function generateGlobalColorsCss() {
+  // Get or create the style element for generated colors
+  let styleElement = document.getElementById('generated-colors');
+  if (!styleElement) {
+    styleElement = document.createElement('style');
+    styleElement.id = 'generated-colors';
+    document.head.appendChild(styleElement);
+  }
   
-  // Update CSS variables directly in :root
+  // Build CSS content with all color variables
+  let cssContent = ':root {\n';
+  cssContent += `  --swatch-count: ${window.allColorScales[0]?.hexValues.length || 13};\n`;
+  
   window.allColorScales.forEach(scale => {
     const baseName = scale.name.split('-')[0]; // Get color name without the -500
     
@@ -188,15 +194,15 @@ function generateGlobalColorsCss() {
       const steps = getStepsForCurrentCount();
       const currentLevel = steps[index];
       
-      // Update CSS variable directly
-      document.documentElement.style.setProperty(
-        `--${baseName}-${currentLevel}`,
-        hex
-      );
+      // Add CSS variable to content
+      cssContent += `  --${baseName}-${currentLevel}: ${hex};\n`;
     });
   });
   
+  cssContent += '}';
   
+  // Update the style element content
+  styleElement.textContent = cssContent;
 }
 
 // Curve drawing functions removed - no longer needed

@@ -362,7 +362,7 @@ body {
 }
 
 [data-theme="dark"] .touch-color-pill {
-  background: color-mix(in srgb, var(--slate-800) 75%, transparent);
+  background: color-mix(in srgb, var(--slate-250) 25%, transparent);
 }
 
 /* Dark mode toggle */
@@ -389,10 +389,11 @@ body {
 }
 
 .dark-mode-toggle:hover {
-  background: var(--slate-300);
+  background: color-mix(in srgb, var(--slate-300) 25%, transparent);
 }
+
 [data-theme="dark"] .dark-mode-toggle:hover {
-  background: var(--slate-800);
+  background: color-mix(in srgb, var(--slate-150) 25%, transparent);
 }
 
 .sun-icon {
