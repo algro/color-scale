@@ -101,5 +101,21 @@
 
     <!-- Scripts -->
     <script type="module" src="app.js"></script>
+    
+    <!-- Import Lucide icons (available but not applied) -->
+    <script src="node_modules/lucide/dist/umd/lucide.js"></script>
+    <script>
+        // Make Lucide available for future use with consistent sizing
+        if (typeof lucide !== 'undefined') {
+            window.lucideIcons = lucide;
+            lucide.createIcons({
+                attrs: {
+                    'stroke-width': '1.5',
+                    'width': '20',
+                    'height': '20'
+                }
+            });
+        }
+    </script>
   </body>
 </html>
