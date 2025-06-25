@@ -49,15 +49,17 @@
         <!-- Color columns will be inserted here -->
       </div>
       <div class="content-wrapper">
-        <div class="controls-row">
-          <button id="copy-scale-button" class="copy-scale-button">
-            Copy scale
-          </button>
-        </div>
+        
 
         <div class="documentation">
-          <p>This color palette utilizes global progression curves for lightness and saturation, enabling precise color transitions throughout your design system. This approach creates more closely spaced color steps in the lightest tints and darkest shades, giving you the fine-tuned look and feel needed for modern UI design. </br> </br> Each color scale features hue progression, allowing individual colors to shift toward different hues in their lightest and darkest variants, creating more natural and visually appealing color relationships. The system leverages the OKHSL color space to maintain consistent perceived saturation across all hues, ensuring your color palette remains visually balanced.</p>
-          <p class="reference">
+          <p>This color palette utilizes global progression curves for lightness and saturation, enabling precise color transitions with closely spaced color steps in the lightest tints and darkest shades:</p>
+          
+          <div class="graph-container">
+            <img src="assets/graph.svg" alt="Color progression curve visualization" style="filter: invert(var(--filter-invert)); opacity: 0.8;">
+          </div>
+          
+          <p>Each color scale features hue progression, allowing individual colors to shift toward different hues in their lightest and darkest variants, creating more natural color relationships. The system leverages the OKHSL color space to maintain consistent perceived saturation across all hues, ensuring your color palette remains visually balanced.</p>
+          <p>
             The OKHSL color space implementation is based on
             <a
               href="https://bottosson.github.io/posts/colorpicker/#okhsl"
@@ -96,6 +98,11 @@
               >https://github.com/algro/color-scale
             </a>
           </p>
+        </div>
+        <div class="controls-row">
+          <button id="copy-scale-button" class="copy-scale-button">
+            Copy scale
+          </button>
         </div>
       </div>
     </div>
