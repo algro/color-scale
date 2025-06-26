@@ -19,7 +19,7 @@ export const defaults = {
   // Syntax: ["easingType:rate", step, "easingType:rate", step, ...]
   // Rate is optional (defaults to 1.0), allows partial progression that cascades
   lightnessCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.78",850,"linear:0.22"],
-  saturationCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.78",850,"linear:0.22"],
+  saturationCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.65",850,"linear:0.35"],
   hueCurve: ["linear", 500, "linear"],
 
   // Note: Uses OKhsl color space for perceptually uniform saturation across all hues.
@@ -41,7 +41,7 @@ export const colorConfigs = [
     name: "orange-500",
     baseHex: "#f67b29",
     startHueShift: 26,
-    endHueShift:   -8
+    endHueShift:   -20
   },
   {
     name: "amber-500",
@@ -53,7 +53,7 @@ export const colorConfigs = [
     name: "yellow-500",
     baseHex: "#FAB905",
     startHueShift: 15,
-    endHueShift:   -32
+    endHueShift:   -30
   },
   {
     name: "olive-500",
