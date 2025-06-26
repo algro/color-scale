@@ -1,8 +1,128 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="416" height="64" fill="none" viewBox="0 0 416 64">
-  <path fill="#000" d="M224 62h29v-3a1 1 0 0 1 2 0v3h29v-3a1 1 0 0 1 2 0v3h29v-3a1 1 0 0 1 2 0v3h14V39.874a4.01 4.01 0 0 0 2 0V62h13v-3a1 1 0 0 1 2 0v3h29v-3a1 1 0 0 1 2 0v3h19a8 8 0 0 0 8-8v-4.126a4.01 4.01 0 0 0 2 0V54l-.013.515C407.719 59.798 403.35 64 398 64H17l-.515-.013c-4.265-.216-7.824-3.106-9.038-7.026a3.987 3.987 0 0 0 2.026-.243A8.003 8.003 0 0 0 17 62h19v-3a1 1 0 1 1 2 0v3h29v-3a1 1 0 1 1 2 0v3h14V48.874a4.005 4.005 0 0 0 2 0V62h13v-3a1 1 0 1 1 2 0v3h29v-3a1 1 0 0 1 2 0v3h29v-3a1 1 0 0 1 2 0v3h29v-3a1 1 0 0 1 2 0v3h29V11.874a4.01 4.01 0 0 0 2 0V62ZM8 51a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/>
-  <path fill="#000" d="M68 44a1 1 0 0 1 1 1v.975l11.002-1.086a3.982 3.982 0 0 0 .453 1.966L37.434 51.1A1 1 0 0 1 38 52v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 .398-.798l-24.445 2.411a4.027 4.027 0 0 0-.197-1.99L67 46.172V45a1 1 0 0 1 1-1Zm0 7a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Z"/>
-  <path fill="#000" d="M398 0c5.523 0 10 4.477 10 10v32.126a4.01 4.01 0 0 0-2 0V10a8 8 0 0 0-8-8h-19v3a1 1 0 0 1-2 0V2h-29v3a1 1 0 0 1-2 0V2h-29v3a1 1 0 0 1-2 0V2h-29v3a1 1 0 0 1-2 0V2h-29v3a1 1 0 0 1-2 0V2h-29v2.126a4.011 4.011 0 0 0-2 0V2h-29v3a1 1 0 0 1-2 0V2h-29v3a1 1 0 0 1-2 0V2h-29v3a1 1 0 0 1-2 0V2h-29v3a1 1 0 1 1-2 0V2H69v3a1 1 0 1 1-2 0V2H38v3a1 1 0 1 1-2 0V2H17a8 8 0 0 0-8 8v39.126a4.006 4.006 0 0 0-2 0V10C7 4.65 11.202.28 16.485.013L17 0h381Z"/>
-  <path fill="#000" d="M37 44a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1ZM219.112 7.059a4.001 4.001 0 0 0 .031 2c-9.348.27-18.001 1.504-26.247 3.383a1 1 0 0 1-1.504.35c-12.775 3.049-24.605 7.608-36.58 12.447-17.172 6.94-34.654 14.46-55.551 18.796A1 1 0 0 1 100 45v2a1 1 0 1 1-2 0v-2c0-.319.15-.602.382-.785-3.408.689-6.907 1.29-10.51 1.793a4.005 4.005 0 0 0-.002-2.02c15.248-2.15 28.605-6.134 41.166-10.723A1.004 1.004 0 0 1 129 33v-2a1 1 0 0 1 2 0v1.541c7.891-2.94 15.487-6.094 23.062-9.155C166.075 18.53 178.033 13.917 191 10.83V10a1 1 0 0 1 2 0v.367c8.198-1.836 16.815-3.042 26.112-3.308ZM130 44a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm29 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM84 43a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/>
-  <path fill="#000" d="M377.46 40.84A1 1 0 0 1 377 40v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-.717.958l24.997 3.571a3.991 3.991 0 0 0-.247 1.986L348 38.652V40a1 1 0 0 1-2 0v-1.634l-10.144-1.306a3.983 3.983 0 0 0 .028-2.016l41.576 5.797ZM37 37a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm16-3a2 2 0 1 1 0 4 2 2 0 0 1 0-4ZM226.884 7.043c10.505.223 18.897 1.352 26.116 3.044V10a1 1 0 0 1 2 0v.575c8.454 2.164 15.33 5.1 22.282 8.2 10.478 4.672 21.114 9.709 37.718 13.07V31a1 1 0 0 1 2 0v1.236c3.825.722 6.96 1.355 11.472 1.878A3.981 3.981 0 0 0 328 36l.001.07c-19.615-2.296-31.226-6.682-42.001-11.262V26a1 1 0 0 1-2 0v-2l.002-.054c-2.576-1.12-5.063-2.243-7.534-3.345-6.796-3.031-13.485-5.888-21.664-8.01a.997.997 0 0 1-1.793-.447c-7.201-1.725-15.582-2.876-26.15-3.101a3.987 3.987 0 0 0 .023-2ZM37 30a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1ZM37 23a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm62 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1ZM37 16a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Z"/>
-  <path fill="#000" d="M254 16a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1ZM37 9a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm124 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1Zm31 0a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1ZM223 6a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/>
+<svg width="416" height="64" viewBox="0 0 416 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_153_5639)">
+<rect x="8" y="1" width="399" height="62" rx="9" stroke="black" stroke-width="2"/>
+<path d="M8 53L84 45.5C145.5 38 155 8 208 8" stroke="black" stroke-width="2"/>
+<path d="M406.5 46L333 35.5C271.5 27 270 9.5 208 8" stroke="black" stroke-width="2"/>
+<path d="M36 2H38V5C38 5.55228 37.5523 6 37 6C36.4477 6 36 5.55228 36 5V2Z" fill="black"/>
+<rect x="36" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="36" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="36" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="36" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="36" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="36" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="36" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M36 59C36 58.4477 36.4477 58 37 58C37.5523 58 38 58.4477 38 59V62H36V59Z" fill="black"/>
+<path d="M68 2H70V5C70 5.55228 69.5523 6 69 6C68.4477 6 68 5.55228 68 5V2Z" fill="black"/>
+<rect x="68" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="68" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="68" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="68" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="68" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="68" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="68" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M68 59C68 58.4477 68.4477 58 69 58C69.5523 58 70 58.4477 70 59V62H68V59Z" fill="black"/>
+<path d="M98 2H100V5C100 5.55228 99.5523 6 99 6C98.4477 6 98 5.55228 98 5V2Z" fill="black"/>
+<rect x="98" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="98" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="98" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="98" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="98" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="98" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="98" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M98 59C98 58.4477 98.4477 58 99 58C99.5523 58 100 58.4477 100 59V62H98V59Z" fill="black"/>
+<path d="M129 2H131V5C131 5.55228 130.552 6 130 6C129.448 6 129 5.55228 129 5V2Z" fill="black"/>
+<rect x="129" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="129" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="129" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="129" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="129" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="129" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="129" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M129 59C129 58.4477 129.448 58 130 58C130.552 58 131 58.4477 131 59V62H129V59Z" fill="black"/>
+<path d="M160 2H162V5C162 5.55228 161.552 6 161 6C160.448 6 160 5.55228 160 5V2Z" fill="black"/>
+<rect x="160" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="160" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="160" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="160" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="160" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="160" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="160" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M160 59C160 58.4477 160.448 58 161 58C161.552 58 162 58.4477 162 59V62H160V59Z" fill="black"/>
+<path d="M191 2H193V5C193 5.55228 192.552 6 192 6C191.448 6 191 5.55228 191 5V2Z" fill="black"/>
+<rect x="191" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="191" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="191" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="191" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="191" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="191" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="191" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M191 59C191 58.4477 191.448 58 192 58C192.552 58 193 58.4477 193 59V62H191V59Z" fill="black"/>
+<path d="M223 2H225V5C225 5.55228 224.552 6 224 6C223.448 6 223 5.55228 223 5V2Z" fill="black"/>
+<rect x="223" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="223" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="223" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="223" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="223" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="223" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="223" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M223 59C223 58.4477 223.448 58 224 58C224.552 58 225 58.4477 225 59V62H223V59Z" fill="black"/>
+<path d="M253 2H255V5C255 5.55228 254.552 6 254 6C253.448 6 253 5.55228 253 5V2Z" fill="black"/>
+<rect x="253" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="253" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="253" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="253" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="253" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="253" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="253" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M253 59C253 58.4477 253.448 58 254 58C254.552 58 255 58.4477 255 59V62H253V59Z" fill="black"/>
+<path d="M284 2H286V5C286 5.55228 285.552 6 285 6C284.448 6 284 5.55228 284 5V2Z" fill="black"/>
+<rect x="284" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="284" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="284" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="284" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="284" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="284" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="284" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M284 59C284 58.4477 284.448 58 285 58C285.552 58 286 58.4477 286 59V62H284V59Z" fill="black"/>
+<path d="M316 2H318V5C318 5.55228 317.552 6 317 6C316.448 6 316 5.55228 316 5V2Z" fill="black"/>
+<rect x="316" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="316" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="316" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="316" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="316" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="316" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="316" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M316 59C316 58.4477 316.448 58 317 58C317.552 58 318 58.4477 318 59V62H316V59Z" fill="black"/>
+<path d="M347 2H349V5C349 5.55228 348.552 6 348 6C347.448 6 347 5.55228 347 5V2Z" fill="black"/>
+<rect x="347" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="347" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="347" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="347" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="347" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="347" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="347" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M347 59C347 58.4477 347.448 58 348 58C348.552 58 349 58.4477 349 59V62H347V59Z" fill="black"/>
+<path d="M377 2H379V5C379 5.55228 378.552 6 378 6C377.448 6 377 5.55228 377 5V2Z" fill="black"/>
+<rect x="377" y="9" width="2" height="4" rx="1" fill="black"/>
+<rect x="377" y="16" width="2" height="4" rx="1" fill="black"/>
+<rect x="377" y="23" width="2" height="4" rx="1" fill="black"/>
+<rect x="377" y="30" width="2" height="4" rx="1" fill="black"/>
+<rect x="377" y="37" width="2" height="4" rx="1" fill="black"/>
+<rect x="377" y="44" width="2" height="4" rx="1" fill="black"/>
+<rect x="377" y="51" width="2" height="4" rx="1" fill="black"/>
+<path d="M377 59C377 58.4477 377.448 58 378 58C378.552 58 379 58.4477 379 59V62H377V59Z" fill="black"/>
+<rect x="83" y="45" width="2" height="17" fill="black"/>
+<rect x="332" y="35" width="2" height="28" fill="black"/>
+<rect x="207" y="7" width="2" height="55" fill="black"/>
+<circle cx="8" cy="53" r="3" fill="black" stroke="white" stroke-width="2"/>
+<circle cx="84" cy="45" r="3" fill="black" stroke="white" stroke-width="2"/>
+<circle cx="208" cy="8" r="3" fill="black" stroke="white" stroke-width="2"/>
+<circle cx="2" cy="2" r="3" transform="matrix(-1 0 0 1 335 33)" fill="black" stroke="white" stroke-width="2"/>
+<circle cx="2" cy="2" r="3" transform="matrix(-1 0 0 1 409 44)" fill="black" stroke="white" stroke-width="2"/>
+</g>
+<defs>
+<clipPath id="clip0_153_5639">
+<rect width="416" height="64" fill="white"/>
+</clipPath>
+</defs>
 </svg>
