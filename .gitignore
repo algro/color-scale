@@ -38,3 +38,6 @@ pids
 figlet-code.js
 figlet-ui.html
 README-DEV.md
+# Analysis and helper scripts
+visual-balance-analysis.js
+helpers/
