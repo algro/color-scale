@@ -37,3 +37,4 @@ pids
 # Project-specific files to ignore
 figlet-code.js
 figlet-ui.html
+README-DEV.md
