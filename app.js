@@ -3,6 +3,7 @@ import Color from "https://colorjs.io/dist/color.js";
 import { generatePerceptuallyUniformScale, ease } from "./scale.js";
 import { defaults, colorConfigs, stepsCount } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";
+import { okhslToOKLCH } from "./okhsl.js";
 
 // Note: --swatch-count is now handled in generateGlobalColorsCss()
 
@@ -33,7 +34,9 @@ function getStepNameForIndex(colorName, stepIndex) {
 
 function createScaleRow({
   name,
-  baseHex,
+  baseHue,
+  baseSaturation,
+  baseLightness,
   startHueShift,
   endHueShift,
   startL: cfgStartL,
@@ -41,11 +44,11 @@ function createScaleRow({
   ...overrides
 }, rowIndex) {
   // Always use 13 steps
-  // Convert baseHex → OKLCH coords:
-  const [L01, C04, Hdeg] = new Color(baseHex).to("oklch").coords;
-  const baseL = L01 * 100;   // Convert from 0-1 to 0-100 range
-  const baseC = C04;         // Keep in 0-0.4 range
-  const baseH = Hdeg;
+  // Convert OKhsl base values to OKLCH coords:
+  const baseOKLCH = okhslToOKLCH(baseHue, baseSaturation, baseLightness);
+  const baseL = baseOKLCH.L;   // Already in 0-100 range
+  const baseC = baseOKLCH.C;   // Already in 0-0.4 range
+  const baseH = baseOKLCH.H;   // Already in 0-360 range
 
   // Build the "options" object:
   const options = {
@@ -72,7 +75,7 @@ function createScaleRow({
     name: name,
     hexValues: fullScaleHex,
     lchValues: fullScaleLCH,
-    config: { name, baseHex, startHueShift, endHueShift, startL: cfgStartL, endL: cfgEndL, ...overrides }
+    config: { name, baseHue, baseSaturation, baseLightness, startHueShift, endHueShift, startL: cfgStartL, endL: cfgEndL, ...overrides }
   });
 
   const row = document.createElement("div");

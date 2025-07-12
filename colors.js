@@ -26,12 +26,14 @@ export const defaults = {
   // Piecewise curves control lightness, saturation, and hue progression for maximum flexibility.
 };
 
-// 3) Export your array of colorConfigs. Any per-color override for L/C
-//    must follow the same ranges: L in 0..100, C in 0..0.4.
+// 3) Export your array of colorConfigs using OKhsl values directly
+//    All values are in OKhsl space: h (0-1), s (0-1), l (0-1)
 export const colorConfigs = [
   {
     name: "red-500", 
-    baseHex: "#F23441",
+    baseHue: 0.0,        // Red hue (0-1)
+    baseSaturation: 0.8, // Perceptually uniform saturation
+    baseLightness: 0.6,  // Perceptually uniform lightness
     startHueShift: -8.0,
     endHueShift: -5,
     // Example: Custom saturation curve for red with rates
@@ -39,115 +41,153 @@ export const colorConfigs = [
   },
   {
     name: "orange-500",
-    baseHex: "#f67b29",
+    baseHue: 0.0833,     // Orange hue (30° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: 26,
-    endHueShift:   -20
+    endHueShift: -20
   },
   {
     name: "amber-500",
-    baseHex: "#F5A314",
+    baseHue: 0.1111,     // Amber hue (40° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: 20,
-    endHueShift:   -25
+    endHueShift: -25
   },
   {
     name: "yellow-500",
-    baseHex: "#FAB905",
+    baseHue: 0.1389,     // Yellow hue (50° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: 15,
-    endHueShift:   -30
+    endHueShift: -30
   },
   {
     name: "olive-500",
-    baseHex: "#C5C020",
+    baseHue: 0.1667,     // Olive hue (60° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: 0,
-    endHueShift:   -5
+    endHueShift: -5
   },
   {
     name: "lime-500",
-    baseHex: "#9BC61C",
+    baseHue: 0.1944,     // Lime hue (70° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: -10,
-    endHueShift:    5
+    endHueShift: 5
   },
   {
     name: "green-500",
-    baseHex: "#01C15B",
+    baseHue: 0.3333,     // Green hue (120° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: -10,
-    endHueShift:    12
+    endHueShift: 12
   },
   {
     name: "emerald-500",
-    baseHex: "#0cbc7d",
-    startHueShift:  0,
-    endHueShift:   12
+    baseHue: 0.4167,     // Emerald hue (150° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: 0,
+    endHueShift: 12
   },
   {
     name: "teal-500",
-    baseHex: "#14b8a6",
+    baseHue: 0.5,        // Teal hue (180° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: -5,
-    endHueShift:   5.0
+    endHueShift: 5.0
   },
   {
     name: "cyan-500",
-    baseHex: "#00B8DB",
+    baseHue: 0.5278,     // Cyan hue (190° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: -5,
-    endHueShift:   -2
+    endHueShift: -2
   },
   {
     name: "sky-500",
-    baseHex: "#00A6F4",
-    startHueShift:  -5,
-    endHueShift:    0
+    baseHue: 0.5556,     // Sky hue (200° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: -5,
+    endHueShift: 0
   },
   {
     name: "blue-500",
-    baseHex: "#3d88fd",
-    startHueShift:  -5,
-    endHueShift:     5
+    baseHue: 0.6111,     // Blue hue (220° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: -5,
+    endHueShift: 5
   },
   {
     name: "indigo-500",
-    baseHex: "#5766fc",
-    startHueShift:  -5,
-    endHueShift:     0
+    baseHue: 0.6667,     // Indigo hue (240° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: -5,
+    endHueShift: 0
   },
   {
     name: "iris-500",
-    baseHex: "#6D4AFF",
-    startHueShift:  -5,
-    endHueShift:     7
+    baseHue: 0.7222,     // Iris hue (260° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: -5,
+    endHueShift: 7
   },
   {
     name: "violet-500",
-    baseHex: "#8E51FF",
-    startHueShift:  -5.0,
-    endHueShift:    5.0
+    baseHue: 0.7778,     // Violet hue (280° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: -5.0,
+    endHueShift: 5.0
   },
   {
     name: "purple-500",
-    baseHex: "#ad48fe",
-    startHueShift:   4.5,
-    endHueShift:    -1.2
+    baseHue: 0.8333,     // Purple hue (300° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: 4.5,
+    endHueShift: -1.2
   },
   {
     name: "fuchsia-500",
-    baseHex: "#D641EC",
-    startHueShift:  -2.5,
-    endHueShift:     3.5
+    baseHue: 0.8889,     // Fuchsia hue (320° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: -2.5,
+    endHueShift: 3.5
   },
   {
     name: "pink-500",
-    baseHex: "#F53DA5",
+    baseHue: 0.9167,     // Pink hue (330° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
     startHueShift: -5,
-    endHueShift:    3
+    endHueShift: 3
   },
   {
     name: "rose-500",
-    baseHex: "#EE3A59",
-    startHueShift:  -4.0,
-    endHueShift:    -12
+    baseHue: 0.9722,     // Rose hue (350° / 360°)
+    baseSaturation: 0.8,
+    baseLightness: 0.6,
+    startHueShift: -4.0,
+    endHueShift: -12
   },
   {
     name: "sand-500",
-    baseHex: "#99615C",
+    baseHue: 0.0833,     // Sand hue (similar to orange but muted)
+    baseSaturation: 0.2, // Low saturation for muted appearance
+    baseLightness: 0.6,
     startHueShift: 10.0,
     endHueShift: -20.0,
     startS: 0.02,  // Low saturation at step 50
@@ -155,7 +195,9 @@ export const colorConfigs = [
   },
   {
     name: "slate-500",
-    baseHex: "#617085",
+    baseHue: 0.6667,     // Slate hue (similar to indigo but muted)
+    baseSaturation: 0.2, // Low saturation for muted appearance
+    baseLightness: 0.6,
     startHueShift: -8.0,
     endHueShift: 8.0,
     startS: 0.02,  // Low saturation at step 50
@@ -163,7 +205,9 @@ export const colorConfigs = [
   },
   {
     name: "grey-500",
-    baseHex: "#636A79",
+    baseHue: 0.6667,     // Grey hue (similar to slate)
+    baseSaturation: 0.1, // Very low saturation
+    baseLightness: 0.6,
     startHueShift: -10,
     endHueShift: -5,
     startS: 0.02,  // Very low saturation at step 50
@@ -171,7 +215,9 @@ export const colorConfigs = [
   },
   {
     name: "zinc-500",
-    baseHex: "#67676F",
+    baseHue: 0.6667,     // Zinc hue (similar to grey)
+    baseSaturation: 0.1, // Very low saturation
+    baseLightness: 0.6,
     startHueShift: 0.0,
     endHueShift: 0.0,
     startS: 0.02,  // Very low saturation at step 50
@@ -179,7 +225,9 @@ export const colorConfigs = [
   },
   {
     name: "neutral-500",
-    baseHex: "#686868",
+    baseHue: 0.0,        // Neutral hue (doesn't matter for grayscale)
+    baseSaturation: 0.0, // No saturation (pure grayscale)
+    baseLightness: 0.6,
     startHueShift: 0.0,
     endHueShift: 0.0,
     startS: 0.0,  // No saturation (pure grayscale)
