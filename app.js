@@ -1,7 +1,7 @@
 // app.js
 import Color from "https://colorjs.io/dist/color.js";
 import { generatePerceptuallyUniformScale, ease } from "./scale.js";
-import { defaults, colorConfigs, stepsCount } from "./colors.js";
+import { defaults, colorConfigs, stepsCount, calculateSaturationRange } from "./colors.js";
 import { computeContrastDotColor, rgbToOklab, oklchToHex } from "./colors-utilities.js";
 import { okhslToOKLCH } from "./okhsl.js";
 
@@ -50,15 +50,28 @@ function createScaleRow({
   const baseC = baseOKLCH.C;   // Already in 0-0.4 range
   const baseH = baseOKLCH.H;   // Already in 0-360 range
 
+  // Auto-derive startS and endS if not explicitly overridden
+  let startS, endS;
+  if (overrides.startS !== undefined && overrides.endS !== undefined) {
+    // Use explicit overrides
+    startS = overrides.startS;
+    endS = overrides.endS;
+  } else {
+    // Calculate based on baseSaturation using percentage-based approach
+    const calculated = calculateSaturationRange(baseSaturation);
+    startS = overrides.startS ?? calculated.startS;
+    endS = overrides.endS ?? calculated.endS;
+  }
+
   // Build the "options" object:
   const options = {
     baseL,
     baseC,
     baseH,
-    startL:      cfgStartL  ?? defaults.startL,
-    endL:        cfgEndL    ?? defaults.endL,
-    startS:      overrides.startS      ?? defaults.startS,
-    endS:        overrides.endS        ?? defaults.endS,
+    startL: cfgStartL ?? defaults.startL,
+    endL:   cfgEndL ?? defaults.endL,
+    startS,
+    endS,
     startHueShift,
     endHueShift,
     // Curve overrides (use defaults if not specified)

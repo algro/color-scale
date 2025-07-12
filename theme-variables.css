@@ -30,7 +30,7 @@
   --text-norm: var(--slate-900);
   --text-weak: var(--slate-600);
   --text-inverted: var(--slate-50);
-  
+
   /* Filter values */
   --filter-invert: 0;
 
