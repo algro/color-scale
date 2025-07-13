@@ -36,8 +36,9 @@ export const defaults = {
 
   // Separate curves for tints and shades for true symmetry
   // Tint curves: progression from step 50 to step 500
-  tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
-  tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+  // Use easeOutSine for asymmetric distribution like in neutrals overrides
+  tintLightnessCurve: ["linear:0.12", 150, "easeInOutSine:0.78", 400, "linear:0.1", 500],
+  tintSaturationCurve: ["linear:0.12", 150, "easeInOutSine:0.78", 400, "linear:0.1", 500],
   tintHueCurve: ["linear", 500],
 
   /*tintLightnessCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500],
@@ -45,8 +46,9 @@ export const defaults = {
   tintHueCurve: ["linear", 500],*/
   
   // Shade curves: progression from step 500 to step 950
-  shadeLightnessCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
-  shadeSaturationCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
+  // Use easeOutSine for asymmetric distribution like in neutrals overrides
+  shadeLightnessCurve: ["linear:0.08", 600, "easeInOutSine:0.67", 850, "linear:0.25", 950],
+  shadeSaturationCurve: ["linear:0.08", 600, "easeInOutSine:0.67", 850, "linear:0.25", 950],
   shadeHueCurve: ["linear", 950],
 
   // Legacy support - these will be ignored if separate curves are provided
@@ -240,7 +242,11 @@ export const colorConfigs = [
     startHueShift: -8.0,
     endHueShift: 8.0,
     startS: 0.02,  // Low saturation at step 50
-    endS: 0.04     // Low saturation at step 950
+    endS: 0.04,     // Low saturation at step 950
+    tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    shadeLightnessCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
+    shadeSaturationCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950]
   },
   {
     name: "grey-500",
@@ -252,7 +258,11 @@ export const colorConfigs = [
     startHueShift: -10,
     endHueShift: -5,
     startS: 0.02,  // Very low saturation at step 50
-    endS: 0.02     // Very low saturation at step 950
+    endS: 0.02,     // Very low saturation at step 950
+    tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    shadeLightnessCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
+    shadeSaturationCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950]
   },
   {
     name: "zinc-500",
@@ -264,7 +274,11 @@ export const colorConfigs = [
     startHueShift: 0.0,
     endHueShift: 0.0,
     startS: 0.02,  // Very low saturation at step 50
-    endS: 0.02     // Very low saturation at step 950
+    endS: 0.02,     // Very low saturation at step 950
+    tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    shadeLightnessCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
+    shadeSaturationCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950]
   },
   {
     name: "neutral-500",
@@ -276,7 +290,11 @@ export const colorConfigs = [
     startHueShift: 0.0,
     endHueShift: 0.0,
     startS: 0.0,  // No saturation (pure grayscale)
-    endS: 0.0     // No saturation (pure grayscale)
+    endS: 0.0,     // No saturation (pure grayscale)
+    tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    shadeLightnessCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
+    shadeSaturationCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950]
   }
 ];
 

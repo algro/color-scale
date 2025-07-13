@@ -424,6 +424,7 @@ body {
 
 .controls-row {
   display: flex;
+  margin-bottom: 24px;
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -498,6 +499,11 @@ body {
   color: var(--text-norm);
   padding-left: 6px;
   padding-right: 6px;
+}
+.footnote{
+  padding-left: 6px;
+  font-size: 12px;
+  color: var(--text-weak);
 }
 
 /* Link styles */
