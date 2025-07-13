@@ -215,10 +215,10 @@ function evaluateCurveSegment(step, curveDefinition, startValue, endValue, allSt
     startIndex: allSteps.indexOf(seg.startStep),
     endIndex: allSteps.indexOf(seg.endStep)
   }));
-
+  
   // Compute total rate
   const totalRate = segments.reduce((sum, seg) => sum + seg.rate, 0);
-
+    
   let accumulatedRate = 0;
   for (const segment of segments) {
     const segSpan = segment.endIndex - segment.startIndex;
@@ -232,7 +232,7 @@ function evaluateCurveSegment(step, curveDefinition, startValue, endValue, allSt
       const progressInSeg = (segment.rate / totalRate) * easedT;
       const progress = progressBefore + progressInSeg;
       return startValue + (endValue - startValue) * progress;
-    }
+      }
     accumulatedRate += segment.rate;
   }
 
