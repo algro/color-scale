@@ -127,11 +127,12 @@ export function ease(t, easingType = "linear") {
 /**
  * Parse curve definition and return segment information with rates
  * @param {Array} curveDefinition - Array like ["linear:0.5", 200, "easeInQuad:0.3", 400, "linear", 500]
+ * @param {number} startStep - Starting step (default: 50)
  * @returns {Array} Array of segments with {easingType, rate, endStep}
  */
-function parseCurveDefinition(curveDefinition) {
+function parseCurveDefinition(curveDefinition, startStep = 50) {
   const segments = [];
-  let currentStep = 50; // Always start at step 50
+  let currentStep = startStep;
   
   for (let i = 0; i < curveDefinition.length; i += 2) {
     const easingSpec = curveDefinition[i];
@@ -161,15 +162,16 @@ function parseCurveDefinition(curveDefinition) {
 }
 
 /**
- * Evaluate a piecewise curve with cascading progression and adjustable rates
+ * Evaluate a piecewise curve with separate tint and shade curves
  * @param {number} step - The step number (50, 100, 200, etc.)
- * @param {Array} curveDefinition - The curve definition array with rates
+ * @param {Array} tintCurve - Curve definition for tints (50→500)
+ * @param {Array} shadeCurve - Curve definition for shades (500→950)
  * @param {number} startValue - Value at step 50
  * @param {number} baseValue - Value at step 500 (base)
  * @param {number} endValue - Value at step 950
  * @returns {number} The interpolated value at the given step
  */
-function evaluatePiecewiseCurve(step, curveDefinition, startValue, baseValue, endValue) {
+function evaluatePiecewiseCurve(step, tintCurve, shadeCurve, startValue, baseValue, endValue) {
   const allSteps = [50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 850, 900, 950];
   const stepIndex = allSteps.indexOf(step);
   if (stepIndex === -1) {
@@ -184,69 +186,58 @@ function evaluatePiecewiseCurve(step, curveDefinition, startValue, baseValue, en
     return baseValue;
   }
   
-  // Parse segments with rates
-  const segments = parseCurveDefinition(curveDefinition).map(seg => ({
+  const isInTints = stepIndex < baseIndex;
+  
+  if (isInTints) {
+    // TINTS: Use tint curve (50→500)
+    return evaluateCurveSegment(step, tintCurve, startValue, baseValue, allSteps, 0, baseIndex);
+  } else {
+    // SHADES: Use shade curve (500→950)
+    return evaluateCurveSegment(step, shadeCurve, baseValue, endValue, allSteps, baseIndex, allSteps.length - 1);
+  }
+}
+
+/**
+ * Helper function to evaluate a curve segment
+ */
+function evaluateCurveSegment(step, curveDefinition, startValue, endValue, allSteps, startIndex, endIndex) {
+  const stepIndex = allSteps.indexOf(step);
+  if (!curveDefinition || curveDefinition.length === 0) {
+    // Fall back to linear progression
+    const t = (stepIndex - startIndex) / (endIndex - startIndex);
+    return startValue + (endValue - startValue) * t;
+  }
+
+  // Parse segments
+  const startStep = allSteps[startIndex];
+  const segments = parseCurveDefinition(curveDefinition, startStep).map(seg => ({
     ...seg,
     startIndex: allSteps.indexOf(seg.startStep),
     endIndex: allSteps.indexOf(seg.endStep)
   }));
-  
-  const isInTints = stepIndex < baseIndex;
-  
-  if (isInTints) {
-    // TINTS: Only consider segments that affect the tint range (50→500)
-    const tintSegments = segments.filter(seg => seg.endIndex <= baseIndex);
-    
-    let currentValue = 0;
-    for (const segment of tintSegments) {
-      if (stepIndex < segment.startIndex) break;
-      
-      let segmentCompletion;
-      if (stepIndex >= segment.endIndex) {
-        segmentCompletion = 1.0;
-      } else {
-        segmentCompletion = (stepIndex - segment.startIndex) / (segment.endIndex - segment.startIndex);
-      }
-      
-      const easedCompletion = ease(segmentCompletion, segment.easingType);
-      currentValue += segment.rate * easedCompletion;
-      
-      if (stepIndex <= segment.endIndex) break;
+
+  // Compute total rate
+  const totalRate = segments.reduce((sum, seg) => sum + seg.rate, 0);
+
+  let accumulatedRate = 0;
+  for (const segment of segments) {
+    const segSpan = segment.endIndex - segment.startIndex;
+    if (stepIndex >= segment.startIndex && stepIndex <= segment.endIndex) {
+      // Step is in this segment
+      const localT = segSpan === 0 ? 0 : (stepIndex - segment.startIndex) / segSpan;
+      const easedT = ease(localT, segment.easingType);
+      // Progress up to this segment
+      const progressBefore = accumulatedRate / totalRate;
+      // Progress within this segment
+      const progressInSeg = (segment.rate / totalRate) * easedT;
+      const progress = progressBefore + progressInSeg;
+      return startValue + (endValue - startValue) * progress;
     }
-    
-    const progressRatio = Math.min(currentValue, 1.0);
-    return startValue + (baseValue - startValue) * progressRatio;
-    
-  } else {
-    // SHADES: Only consider segments that affect the shade range (500→950)
-    const shadeSegments = segments.filter(seg => seg.startIndex >= baseIndex);
-    
-    // If no shade segments defined, fall back to linear progression
-    if (shadeSegments.length === 0) {
-      const t = (stepIndex - baseIndex) / (allSteps.length - 1 - baseIndex);
-      return baseValue + (endValue - baseValue) * t;
-    }
-    
-    let currentValue = 0;
-    for (const segment of shadeSegments) {
-      if (stepIndex < segment.startIndex) break;
-      
-      let segmentCompletion;
-      if (stepIndex >= segment.endIndex) {
-        segmentCompletion = 1.0;
-      } else {
-        segmentCompletion = (stepIndex - segment.startIndex) / (segment.endIndex - segment.startIndex);
-      }
-      
-      const easedCompletion = ease(segmentCompletion, segment.easingType);
-      currentValue += segment.rate * easedCompletion;
-      
-      if (stepIndex <= segment.endIndex) break;
-    }
-    
-    const progressRatio = Math.min(currentValue, 1.0);
-    return baseValue + (endValue - baseValue) * progressRatio;
+    accumulatedRate += segment.rate;
   }
+
+  // If not found, return endValue
+  return endValue;
 }
 
 function wrapHue(h) {
@@ -284,12 +275,20 @@ export function generatePerceptuallyUniformScale({
   endS,
   startHueShift,
   endHueShift,
-  lightnessCurve = defaultCurves.lightnessCurve,
-  saturationCurve = defaultCurves.saturationCurve,
-  hueCurve = defaultCurves.hueCurve
+  // New separate curves
+  tintLightnessCurve = defaultCurves.tintLightnessCurve,
+  tintSaturationCurve = defaultCurves.tintSaturationCurve,
+  tintHueCurve = defaultCurves.tintHueCurve,
+  shadeLightnessCurve = defaultCurves.shadeLightnessCurve,
+  shadeSaturationCurve = defaultCurves.shadeSaturationCurve,
+  shadeHueCurve = defaultCurves.shadeHueCurve,
+  // Legacy support
+  lightnessCurve = null,
+  saturationCurve = null,
+  hueCurve = null
 }) {
   const steps = [50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 850, 900, 950];
-  const N = steps.length; // Always 13 steps
+  const N = steps.length;
   const scale = new Array(N);
 
   // Convert base color to OKhsl to get reference saturation
@@ -301,33 +300,28 @@ export function generatePerceptuallyUniformScale({
     const step = steps[i];
     
     if (step === 500) {
-      // Base color unchanged
       scale[i] = { L: baseL, C: baseC, H: baseH };
       continue;
     }
 
-    // Evaluate curves at this step
-    const Li = evaluatePiecewiseCurve(step, lightnessCurve, startL, baseL, endL);
-    const Si = evaluatePiecewiseCurve(step, saturationCurve, startS, baseSaturation, endS);
-    const hueShift = evaluatePiecewiseCurve(step, hueCurve, startHueShift, 0, endHueShift);
+    // Use separate curves for tints vs shades
+    const Li = evaluatePiecewiseCurve(step, tintLightnessCurve, shadeLightnessCurve, startL, baseL, endL);
+    const Si = evaluatePiecewiseCurve(step, tintSaturationCurve, shadeSaturationCurve, startS, baseSaturation, endS);
+    const hueShift = evaluatePiecewiseCurve(step, tintHueCurve, shadeHueCurve, startHueShift, 0, endHueShift);
     const Hi = wrapHue(baseH + hueShift);
 
     // Handle zero saturation case (pure grayscale)
     let Ci;
     if (Si === 0 || isNaN(Si)) {
-      Ci = 0; // Zero chroma for grayscale
+      Ci = 0;
     } else {
-      // Convert saturation through OKhsl to get chroma
       const tempOklch = okhslToOKLCH(Hi / 360, Si, baseOKhsl.l);
       Ci = tempOklch.C;
-      
-      // Fallback if OKhsl conversion produces NaN
       if (isNaN(Ci)) {
         Ci = 0;
       }
     }
 
-    // Use calculated lightness, OKhsl-derived chroma, and calculated hue
     scale[i] = { L: Li, C: Ci, H: Hi };
   }
 

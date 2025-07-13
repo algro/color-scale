@@ -74,10 +74,13 @@ function createScaleRow({
     endS,
     startHueShift,
     endHueShift,
-    // Curve overrides (use defaults if not specified)
-    lightnessCurve:  overrides.lightnessCurve  ?? defaults.lightnessCurve,
-    saturationCurve: overrides.saturationCurve ?? defaults.saturationCurve,
-    hueCurve:        overrides.hueCurve        ?? defaults.hueCurve,
+    // Use separate curves
+    tintLightnessCurve: overrides.tintLightnessCurve ?? defaults.tintLightnessCurve,
+    tintSaturationCurve: overrides.tintSaturationCurve ?? defaults.tintSaturationCurve,
+    tintHueCurve: overrides.tintHueCurve ?? defaults.tintHueCurve,
+    shadeLightnessCurve: overrides.shadeLightnessCurve ?? defaults.shadeLightnessCurve,
+    shadeSaturationCurve: overrides.shadeSaturationCurve ?? defaults.shadeSaturationCurve,
+    shadeHueCurve: overrides.shadeHueCurve ?? defaults.shadeHueCurve,
   };
 
   const fullScaleLCH = generatePerceptuallyUniformScale(options);

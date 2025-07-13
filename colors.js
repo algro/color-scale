@@ -31,16 +31,27 @@ export const defaults = {
   // Default piecewise curves - can be overridden per color
   // Syntax: ["easingType:rate", step, "easingType:rate", step, ...]
   // Rate is optional (defaults to 1.0), allows partial progression that cascades, ideally the sum or rate in tint progression is 1, same in shades
-  
-  //lightnessCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.78",850,"linear:0.22"],
-  lightnessCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.78",850,"linear:0.22"],
-  //saturationCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.65",850,"linear:0.35"],
-  saturationCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500, "easeInOutSine:0.65",850,"linear:0.35"],
 
-  hueCurve: ["linear", 500, "linear"],
+  // 
+
+  // Separate curves for tints and shades for true symmetry
+  // Tint curves: progression from step 50 to step 500
+  tintLightnessCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500],
+  tintSaturationCurve: ["linear:0.12", 150, "easeInOutSine:0.88", 500],
+  tintHueCurve: ["linear", 500],
+  
+  // Shade curves: progression from step 500 to step 950
+  shadeLightnessCurve: ["easeInOutSine:0.65", 850, "linear:0.35", 950],
+  shadeSaturationCurve: ["easeInOutSine:0.65", 850, "linear:0.35", 950],
+  shadeHueCurve: ["linear", 950],
+
+  // Legacy support - these will be ignored if separate curves are provided
+  lightnessCurve: null,
+  saturationCurve: null,
+  hueCurve: null,
 
   // Note: Uses OKhsl color space for perceptually uniform saturation across all hues.
-  // Piecewise curves control lightness, saturation, and hue progression for maximum flexibility.
+  // Separate tint/shade curves ensure true symmetry around step 500.
 };
 
 // Export the calculation function for use in app.js
