@@ -223,7 +223,7 @@ export const colorConfigs = [
   {
     name: "sand-500",
     baseHue: 0.0702,     
-    startL: 98.5,
+    startL: 98.2,
     endL: 19.5,
     baseSaturation: 0.377,
     baseLightness: 0.45,
@@ -235,7 +235,7 @@ export const colorConfigs = [
   {
     name: "slate-500",
     baseHue: 0.7134,     
-    startL: 98.5,
+    startL: 98.2,
     endL: 20,
     baseSaturation: 0.2,
     baseLightness: 0.42,
@@ -251,7 +251,7 @@ export const colorConfigs = [
   {
     name: "grey-500",
     baseHue: 0.7378,    
-    startL: 98.5,
+    startL: 98.2,
     endL: 20,
     baseSaturation: 0.134,
     baseLightness: 0.42,
@@ -267,7 +267,7 @@ export const colorConfigs = [
   {
     name: "zinc-500",
     baseHue: 0.7943,     
-    startL: 98.5,
+    startL: 98.2,
     endL: 20,
     baseSaturation: 0.067,
     baseLightness: 0.42,
@@ -283,7 +283,7 @@ export const colorConfigs = [
   {
     name: "neutral-500",
     baseHue: 0.2497,     
-    startL: 98.5,
+    startL: 98.2,
     endL: 20,
     baseSaturation: 0.000,
     baseLightness: 0.42,
