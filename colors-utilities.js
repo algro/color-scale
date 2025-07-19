@@ -47,7 +47,7 @@ export function rgbToOklab(hex) {
 export function oklchToHex({ L, C, H }) {
   return new Color("oklch", [L / 100, C, H])
            .to("srgb")
-           .toString({ format: "hex", alpha: false });
+           .toString({ format: "hex", alpha: false, collapse: false });
 } 
 
  
