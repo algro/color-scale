@@ -48,11 +48,8 @@ export const defaults = {
   tintHueCurve: ["linear", 500],*/
   
   // Shade curves: progression from step 500 to step 950
-  // Use easeOutSine for asymmetric distribution like in neutrals overrides
-  /*shadeLightnessCurve: ["linear:0.08", 600, "easeInOutSine:0.67", 850, "linear:0.25", 950],
-  shadeSaturationCurve: ["linear:0.08", 600, "easeInOutSine:0.67", 850, "linear:0.25", 950],*/
-  shadeLightnessCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
-  shadeSaturationCurve: ["linear:0.08", 600, "easeOutSine:0.67", 850, "linear:0.25", 950],
+  shadeLightnessCurve: ["linear:0.06", 600, "easeInOutSine:0.69", 850, "linear:0.25", 950],
+  shadeSaturationCurve: ["linear:0.06", 600, "easeInOutSine:0.69", 850, "linear:0.25", 950],
   shadeHueCurve: ["linear", 950],
 
   // Legacy support - these will be ignored if separate curves are provided
@@ -248,7 +245,7 @@ export const colorConfigs = [
     startS: 0.02,  // Low saturation at step 50
     endS: 0.04,     // Low saturation at step 950
     tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
-    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500]
   },
   {
     name: "grey-500",
@@ -262,7 +259,7 @@ export const colorConfigs = [
     startS: 0.02,  // Very low saturation at step 50
     endS: 0.02,     // Very low saturation at step 950
     tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
-    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500] 
   },
   {
     name: "zinc-500",
@@ -290,7 +287,7 @@ export const colorConfigs = [
     startS: 0.0,  // No saturation (pure grayscale)
     endS: 0.0,     // No saturation (pure grayscale)
     tintLightnessCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
-    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500],
+    tintSaturationCurve: ["linear:0.07", 150, "easeOutSine:0.83", 400, "linear:0.1", 500]
     /*The neutral override creates a more compressed light end of the scale by:
     Starting with a much slower progression (7% vs 15%)
     This keeps the very light tints (50, 100, 150) much closer together in lightness
